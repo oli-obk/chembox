@@ -1,6 +1,8 @@
 #ifndef CHEMBOX_PARTICLE_HPP
 #define CHEMBOX_PARTICLE_HPP
 
+#include <cstdint>
+
 enum class ParticleState
 {
 	Plasma, Gas, Liquid, Solid

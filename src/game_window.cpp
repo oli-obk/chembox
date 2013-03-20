@@ -9,11 +9,17 @@
 #include <Gosu/Graphics.hpp>
 #include <Gosu/ImageData.hpp>
 #include <Gosu/Inspection.hpp>
+#include "machines/fourway_pipe.hpp"
 
 GameWindow::GameWindow()
 :Gosu::Window(1200, 800, false)
 ,font(graphics(), Gosu::defaultFontName(), 20)
 {
+	for (size_t y = 0; y < grid.height(); y++) {
+		for (size_t x = 0; x < grid.width(); x++) {
+			grid.reset(x, y, new FourwayPipe(graphics()));
+		}
+	}
 }
 
 GameWindow::~GameWindow()

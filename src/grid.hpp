@@ -19,7 +19,8 @@ public:
 	{
 		if (x >= width()) return optional<T&>();
 		if (y >= height()) return optional<T&>();
-		return optional<T&>(*element(x-1, y-1));
+		if (!element(x, y)) return optional<T&>();
+		return optional<T&>(*element(x, y));
 	}
 	void update()
 	{
@@ -40,6 +41,15 @@ public:
 				element(x, y) -> draw(xpos + double(x)*w, ypos + double(y)*h, w, h);
 			}
 		}
+	}
+	void reset(size_t x, size_t y, T* ptr)
+	{
+		reset(x, y, std::unique_ptr<T>(ptr));
+	}
+	void reset(size_t x, size_t y, std::unique_ptr<T> ptr)
+	{
+		assert(x < width()); assert(y < height());
+		element(x, y) = std::move(ptr);
 	}
 };
 

@@ -7,6 +7,7 @@ enum class ReceiveFromDir
 };
 
 #include "Particle.hpp"
+#include "optional.hpp"
 
 class Machine
 {

@@ -6,6 +6,14 @@ PROJECT(ChemBox)
 SET(SRC_FILES
 	src/main.cpp
     src/game_window.cpp
+	src/game_window.hpp
+	src/grid.hpp
+	src/Particle.hpp
+	src/machine.hpp
+	src/machine.cpp
+
+	src/machines/fourway_pipe.cpp
+	src/machines/fourway_pipe.hpp
 	)
 
 #Projects headers files
@@ -13,12 +21,13 @@ SET(INC_FILES
     src/game_window.hpp
 	include/optional.hpp
 	)
-INCLUDE_DIRECTORIES(include)
+INCLUDE_DIRECTORIES(include src)
 
 #"Sources" and "Headers" are the group names in Visual Studio.
 #They may have other uses too...
 SOURCE_GROUP("Sources" FILES ${SRC_FILES})
 SOURCE_GROUP("Headers" FILES ${INC_FILES})
+SOURCE_GROUP("Build System" FILES CMakeLists.txt)
 
 find_package(Gosu REQUIRED)
 
