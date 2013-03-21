@@ -53,7 +53,11 @@ void GameWindow::draw()
 	graphics().drawTriangle(input().mouseX(), input().mouseY(), Gosu::Colors::gray,
 							input().mouseX()+10, input().mouseY(), Gosu::Colors::gray,
 							input().mouseX(), input().mouseY()+10, Gosu::Colors::gray, 10);
-	grid.draw(gridx, gridy, gridwdt, gridhgt);
+	graphics().pushTransform(Gosu::translate(gridx, gridy));
+	graphics().pushTransform(Gosu::scale(gridwdt/double(grid.width()), gridhgt/double(grid.height())));
+	grid.draw();
+	graphics().popTransform();
+	graphics().popTransform();
 }
 
 void GameWindow::loseFocus()

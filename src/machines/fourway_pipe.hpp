@@ -16,7 +16,7 @@ public:
 
 public:
 	virtual bool accepts(ParticleState, ReceiveFromDir) const;
-	virtual void draw(double x, double y, double wdt, double hgt);
+	virtual void draw(double x, double y);
 	virtual void receive(ParticleState, ParticleType, int count, ParticleEnergy energysum, ReceiveFromDir);
 	virtual void update(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right);
 };

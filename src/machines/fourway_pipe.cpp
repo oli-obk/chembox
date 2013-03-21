@@ -23,9 +23,9 @@ bool FourwayPipe::accepts(ParticleState state, ReceiveFromDir) const
 	return true;
 }
 
-void FourwayPipe::draw(double x, double y, double wdt, double hgt)
+void FourwayPipe::draw(double x, double y)
 {
-	m_pImage->draw(x, y, RenderLayer::Machines, wdt/double(m_pImage->width()), hgt/double(m_pImage->width()));
+	m_pImage->draw(x, y, RenderLayer::Machines, 1.0/double(m_pImage->width()), 1.0/double(m_pImage->height()));
 }
 
 void FourwayPipe::receive(ParticleState, ParticleType, int, ParticleEnergy, ReceiveFromDir)

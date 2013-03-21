@@ -31,14 +31,12 @@ public:
 			}
 		}
 	}
-	void draw(double xpos, double ypos, double wdt, double hgt)
+	void draw()
 	{
-		double w = wdt/double(width());
-		double h = hgt/double(height());
 		for (size_t y = 0; y < height(); y++) {
 			for (size_t x = 0; x < width(); x++) {
 				if (!element(x, y)) continue;
-				element(x, y) -> draw(xpos + double(x)*w, ypos + double(y)*h, w, h);
+				element(x, y) -> draw(x, y);
 			}
 		}
 	}
