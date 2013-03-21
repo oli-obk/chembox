@@ -6,7 +6,8 @@
 
 class ParticleEngine
 {
-	Gosu::Image Gas;
+	static std::weak_ptr<Gosu::Image> s_pGas;
+	std::shared_ptr<Gosu::Image> m_pGas;
 	double t;
 	Gosu::Graphics& graphics;
 public:
