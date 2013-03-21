@@ -1,6 +1,7 @@
 #ifndef GRID_HPP
 #define GRID_HPP
 
+#include <Gosu/Graphics.hpp>
 template <class T, size_t sidepow>
 class Grid
 {
@@ -8,7 +9,9 @@ private:
 	std::array<std::unique_ptr<T>, 1<<(sidepow*2)> m_data;
 	constexpr size_t index(size_t x, size_t y) { return x + (y<<sidepow); }
 	std::unique_ptr<T>& element(size_t x, size_t y) { return m_data[index(x,y)]; }
+	Gosu::Graphics& graphics;
 public:
+	Grid(Gosu::Graphics& g):graphics(g) {}
 	constexpr size_t width() const { return 1<<sidepow; }
 	constexpr size_t height() const { return width(); }
 	//T& operator[](size_t x, size_t y) { return m_data[x+y<<sidepow]; }
@@ -36,7 +39,9 @@ public:
 		for (size_t y = 0; y < height(); y++) {
 			for (size_t x = 0; x < width(); x++) {
 				if (!element(x, y)) continue;
-				element(x, y) -> draw(x, y);
+				graphics.pushTransform(Gosu::translate(x, y));
+				element(x, y) -> draw();
+				graphics.popTransform();
 			}
 		}
 	}

@@ -11,7 +11,7 @@ class ParticleEngine
 	Gosu::Graphics& graphics;
 public:
 	ParticleEngine(Gosu::Graphics&);
-	void drawGasFlow(double x, double y, double dir, double length, double width);
+	void drawGasFlow(double x, double y, double dir, double length, double width, Gosu::Color col, double step = 1.0);
 	void update();
 };
 

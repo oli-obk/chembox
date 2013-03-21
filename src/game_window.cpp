@@ -15,7 +15,7 @@
 GameWindow::GameWindow()
 :Gosu::Window(1200, 800, false)
 ,font(graphics(), Gosu::defaultFontName(), 20)
-,particles(graphics())
+,grid(graphics())
 {
 	for (size_t y = 0; y < grid.height(); y++) {
 		for (size_t x = 0; x < grid.width(); x++) {
@@ -71,7 +71,6 @@ void GameWindow::draw()
 	grid.draw();
 	graphics().popTransform();
 	graphics().popTransform();
-	particles.drawGasFlow(900, 100, Gosu::angle(0, 0, 1, 1), 100, 10);
 }
 
 void GameWindow::loseFocus()
@@ -107,7 +106,6 @@ void GameWindow::update()
 void GameWindow::step()
 {
 	grid.update();
-	particles.update();
 }
 
 int GameWindow::getMouseXInGrid() const

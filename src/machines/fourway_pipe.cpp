@@ -1,11 +1,13 @@
 #include "fourway_pipe.hpp"
 #include <Gosu/Image.hpp>
 #include "defines.hpp"
+#include <Gosu/Math.hpp>
 
 std::weak_ptr<Gosu::Image> FourwayPipe::s_pImage;
 
 FourwayPipe::FourwayPipe(Gosu::Graphics& g)
 :m_pImage(s_pImage.lock())
+,particles(g)
 {
 	if (!m_pImage) {
 		m_pImage.reset(new Gosu::Image(g,L"fourway_pipe.png", true));
@@ -23,9 +25,10 @@ bool FourwayPipe::accepts(ParticleState state, ReceiveFromDir) const
 	return true;
 }
 
-void FourwayPipe::draw(double x, double y)
+void FourwayPipe::draw()
 {
-	m_pImage->draw(x, y, RenderLayer::Machines, 1.0/double(m_pImage->width()), 1.0/double(m_pImage->height()));
+	m_pImage->draw(0, 0, RenderLayer::Machines, 1.0/double(m_pImage->width()), 1.0/double(m_pImage->height()));
+	particles.drawGasFlow(0.5, 0.5, Gosu::angle(0, 0, 1, 0), 0.4, 0.15, Gosu::Colors::red, 0.05);
 }
 
 void FourwayPipe::receive(ParticleState, ParticleType, int, ParticleEnergy, ReceiveFromDir)
@@ -34,4 +37,5 @@ void FourwayPipe::receive(ParticleState, ParticleType, int, ParticleEnergy, Rece
 
 void FourwayPipe::update(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right)
 {
+	particles.update();
 }

@@ -8,13 +8,17 @@ ParticleEngine::ParticleEngine(Gosu::Graphics& g)
 {
 }
 
-void ParticleEngine::drawGasFlow(double x, double y, double dir, double length, double width)
+void ParticleEngine::drawGasFlow(double x, double y, double dir, double length, double width, Gosu::Color col, double step)
 {
 	graphics.pushTransform(Gosu::translate(x, y));
-	graphics.pushTransform(Gosu::rotate(dir));
-	for (double dx = 0; dx < length; dx++) {
-		for (double dy = 0; dy < width; dy++) {
-			Gas.draw(dy, -dx-t, RenderLayer::Particles, 0.01, 0.01, Gosu::Color::WHITE);
+	graphics.pushTransform(Gosu::rotate(dir, width/2));
+	for (double dx = 0; dx < length; dx+=step) {
+		for (double dy = 0; dy < width; dy+=step) {
+			Gosu::Color c = col;
+			double dxt = dx+t*step;
+			double val = dxt/(length+step)*2-1;
+			c.setAlpha(255-val*val*255);
+			Gas.draw(dy, -dxt, RenderLayer::Particles, 0.1/double(Gas.width()), 0.1/double(Gas.height()), c);
 		}
 	}
 	graphics.popTransform();
@@ -24,5 +28,5 @@ void ParticleEngine::drawGasFlow(double x, double y, double dir, double length, 
 void ParticleEngine::update()
 {
 	t += 0.1;
-	if (t >= 1.0) t = 0.0;
+	if (t >= 1.0) t -= 1.0;
 }
