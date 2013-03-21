@@ -10,6 +10,7 @@
 #include <Gosu/ImageData.hpp>
 #include <Gosu/Inspection.hpp>
 #include "machines/fourway_pipe.hpp"
+#include "defines.hpp"
 
 GameWindow::GameWindow()
 :Gosu::Window(1200, 800, false)
@@ -48,7 +49,7 @@ void GameWindow::draw()
 {
 	std::wstringstream wss;
 	wss << Gosu::fps();
-	font.draw(wss.str(), 0, 0, 10);
+	font.draw(wss.str(), 0, 0, RenderLayer::GUI);
 	graphics().drawTriangle(input().mouseX(), input().mouseY(), Gosu::Colors::gray,
 							input().mouseX()+10, input().mouseY(), Gosu::Colors::gray,
 							input().mouseX(), input().mouseY()+10, Gosu::Colors::gray, 10);

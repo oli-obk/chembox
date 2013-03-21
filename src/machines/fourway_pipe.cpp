@@ -1,5 +1,6 @@
 #include "fourway_pipe.hpp"
 #include <Gosu/Image.hpp>
+#include "defines.hpp"
 
 std::weak_ptr<Gosu::Image> FourwayPipe::s_pImage;
 
@@ -24,12 +25,13 @@ bool FourwayPipe::accepts(ParticleState state, ReceiveFromDir) const
 
 void FourwayPipe::draw(double x, double y, double wdt, double hgt)
 {
-	m_pImage->draw(x, y, 0, wdt/double(m_pImage->width()), hgt/double(m_pImage->width()));
+	m_pImage->draw(x, y, RenderLayer::Machines, wdt/double(m_pImage->width()), hgt/double(m_pImage->width()));
 }
 
 void FourwayPipe::receive(ParticleState, ParticleType, int, ParticleEnergy, ReceiveFromDir)
 {
 }
+
 void FourwayPipe::update(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right)
 {
 }
