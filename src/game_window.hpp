@@ -10,6 +10,7 @@
 #include "helpers.hpp"
 #include "grid.hpp"
 #include "machine.hpp"
+#include "particle_engine.hpp"
 
 class GameWindow : public Gosu::Window
 {
@@ -23,7 +24,8 @@ private:
 public:
 protected:
     Gosu::Font font;
-	Grid<Machine, 4> grid;
+	Grid<Machine, 3> grid;
+	ParticleEngine particles;
 public:
 	int getMouseXInGrid() const;
 	int getMouseYInGrid() const;

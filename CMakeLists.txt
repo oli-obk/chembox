@@ -11,6 +11,8 @@ SET(SRC_FILES
 	src/Particle.hpp
 	src/machine.hpp
 	src/machine.cpp
+	src/particle_engine.cpp
+	src/particle_engine.hpp
 
 	src/machines/fourway_pipe.cpp
 	src/machines/fourway_pipe.hpp
