@@ -20,7 +20,7 @@ private:
 	static constexpr double gridx = 100;
 	static constexpr double gridy = 20;
 	static constexpr double gridwdt = 600;
-	static constexpr double gridhgt = 700;
+	static constexpr double gridhgt = 600;
 public:
 protected:
     Gosu::Font font;

@@ -53,7 +53,19 @@ void GameWindow::draw()
 	font.draw(wss.str(), 0, 0, RenderLayer::GUI);
 	graphics().drawTriangle(input().mouseX(), input().mouseY(), Gosu::Colors::gray,
 							input().mouseX()+10, input().mouseY(), Gosu::Colors::gray,
-							input().mouseX(), input().mouseY()+10, Gosu::Colors::gray, 10);
+							input().mouseX(), input().mouseY()+10, Gosu::Colors::gray, RenderLayer::GUI);
+	size_t ix = getMouseXInGrid();
+	size_t iy = getMouseYInGrid();
+	if (ix < grid.width() && iy < grid.height()) {
+		double x = double(ix)/double(grid.width())*gridwdt+gridx;
+		double y = double(iy)/double(grid.height())*gridhgt+gridy;
+		graphics().drawQuad(x, y, Gosu::Color(128, 100, 100, 100),
+							x+gridwdt/double(grid.width()), y, Gosu::Color(128, 100, 100, 100),
+							x+gridwdt/double(grid.width()), y+gridhgt/double(grid.height()), Gosu::Color(128, 100, 100, 100),
+							x, y+gridhgt/double(grid.height()), Gosu::Color(128, 100, 100, 100),
+							RenderLayer::GUI
+			);
+	}
 	graphics().pushTransform(Gosu::translate(gridx, gridy));
 	graphics().pushTransform(Gosu::scale(gridwdt/double(grid.width()), gridhgt/double(grid.height())));
 	grid.draw();
@@ -100,10 +112,10 @@ void GameWindow::step()
 
 int GameWindow::getMouseXInGrid() const
 {
-	return (input().mouseX()-gridx)/gridwdt*double(grid.width());
+	return std::floor((input().mouseX()-gridx)/gridwdt*double(grid.width()));
 }
 
 int GameWindow::getMouseYInGrid() const
 {
-	return (input().mouseY()-gridy)/gridhgt*double(grid.height());
+	return std::floor((input().mouseY()-gridy)/gridhgt*double(grid.height()));
 }
