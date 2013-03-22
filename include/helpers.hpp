@@ -11,4 +11,14 @@ struct constpow<t, 0> {
 	static const long unsigned int value = 1;
 };
 
+template<typename T, T def = 0>
+class builtin_wrapper
+{
+private:
+	T val;
+public:
+	builtin_wrapper(T v = def):val(v) {}
+	operator T() { return val; }
+};
+
 #endif // CHEMBOX_HELPERS_HPP

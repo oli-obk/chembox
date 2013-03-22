@@ -30,7 +30,7 @@ public:
 		for (size_t y = 0; y < height(); y++) {
 			for (size_t x = 0; x < width(); x++) {
 				if (!element(x, y)) continue;
-				element(x, y) -> update(get(x, y-1), get(x, y+1), get(x-1, y), get(x+1, y));
+				element(x, y) -> update();
 			}
 		}
 	}

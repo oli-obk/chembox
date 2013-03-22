@@ -2,6 +2,7 @@
 #define CHEMBOX_PARTICLE_HPP
 
 #include <cstdint>
+#include "helpers.hpp"
 
 enum class ParticleState
 {
@@ -9,7 +10,7 @@ enum class ParticleState
 };
 
 typedef uint8_t ParticleType;
-typedef uint64_t ParticleEnergy;
+typedef builtin_wrapper<uint64_t> ParticleEnergy;
 
 
 #include <map>
