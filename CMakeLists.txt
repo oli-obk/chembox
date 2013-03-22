@@ -16,6 +16,8 @@ SET(SRC_FILES
 
 	src/machines/fourway_pipe.cpp
 	src/machines/fourway_pipe.hpp
+	src/machines/end_pipe.cpp
+	src/machines/end_pipe.hpp
 	)
 
 #Projects headers files

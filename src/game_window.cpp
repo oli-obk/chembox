@@ -11,16 +11,23 @@
 #include <Gosu/Inspection.hpp>
 #include "machines/fourway_pipe.hpp"
 #include "defines.hpp"
+#include "machines/end_pipe.hpp"
 
 GameWindow::GameWindow()
 :Gosu::Window(1200, 800, false)
 ,font(graphics(), Gosu::defaultFontName(), 20)
 ,grid(graphics())
 {
-	for (size_t y = 0; y < grid.height(); y++) {
-		for (size_t x = 0; x < grid.width(); x++) {
+	for (size_t y = 1; y < grid.height() - 1; y++) {
+		grid.reset(0, y, new end_pipe(graphics(), ReceiveFromDir::Right));
+		grid.reset(grid.width()-1, y, new end_pipe(graphics(), ReceiveFromDir::Left));
+		for (size_t x = 1; x < grid.width() - 1; x++) {
 			grid.reset(x, y, new FourwayPipe(graphics()));
 		}
+	}
+	for (size_t x = 1; x < grid.height() - 1; x++) {
+		grid.reset(x, 0, new end_pipe(graphics(), ReceiveFromDir::Down));
+		grid.reset(x, grid.height()-1, new end_pipe(graphics(), ReceiveFromDir::Up));
 	}
 }
 
