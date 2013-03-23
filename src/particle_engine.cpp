@@ -37,3 +37,9 @@ void ParticleEngine::update()
 	t += 0.1;
 	if (t >= 1.0) t -= 1.0;
 }
+
+ParticleEngine::ParticleEngine(const ParticleEngine& rhs)
+:m_pGas(rhs.m_pGas)
+,graphics(rhs.graphics)
+{
+}

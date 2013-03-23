@@ -18,8 +18,10 @@ private:
 public:
 	ParticleMap particles;
 	FourwayPipe(Gosu::Graphics&);
+	FourwayPipe(const FourwayPipe& rhs);
 	virtual ~FourwayPipe();
 
+	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<Machine>(new FourwayPipe(*this)); }
 public:
 	virtual bool accepts(ParticleState, ReceiveFromDir) const;
 	virtual void draw();

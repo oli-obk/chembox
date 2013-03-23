@@ -20,13 +20,21 @@ private:
 	static constexpr double gridy = 20;
 	static constexpr double gridwdt = 600;
 	static constexpr double gridhgt = 600;
+	static constexpr double toolboxx = 800;
+	static constexpr double toolboxy = 20;
+	static constexpr double toolboxwdt = 200;
+	static constexpr double toolboxhgt = 100;
 public:
 protected:
     Gosu::Font font;
-	Grid<Machine, 3> grid;
+	Grid<Machine, 8, 8> grid;
+	Grid<Machine, 2, 1> Toolbox;
+	std::unique_ptr<Machine> dragdrop;
 public:
 	int getMouseXInGrid() const;
 	int getMouseYInGrid() const;
+	int getMouseXInToolbox() const;
+	int getMouseYInToolbox() const;
 	void step();
     GameWindow();
     virtual ~GameWindow();

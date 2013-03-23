@@ -11,6 +11,7 @@ class ParticleEngine
 	double t;
 	Gosu::Graphics& graphics;
 public:
+	ParticleEngine(const ParticleEngine& rhs);
 	ParticleEngine(Gosu::Graphics&);
 	void drawGasFlow(double x, double y, double dir, double length, double width, Gosu::Color col, double step = 1.0);
 	void update();

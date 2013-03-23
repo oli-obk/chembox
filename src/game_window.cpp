@@ -17,6 +17,7 @@ GameWindow::GameWindow()
 :Gosu::Window(1200, 800, false)
 ,font(graphics(), Gosu::defaultFontName(), 20)
 ,grid(graphics())
+,Toolbox(graphics())
 {
 	for (size_t y = 1; y < grid.height() - 1; y++) {
 		grid.reset(0, y, new end_pipe(graphics(), ReceiveFromDir::Right));
@@ -30,14 +31,36 @@ GameWindow::GameWindow()
 		grid.reset(x, grid.height()-1, new end_pipe(graphics(), ReceiveFromDir::Up));
 	}
 	static_cast<FourwayPipe&>(grid.at(1,1)).particles.add(ParticleState::Gas, ParticleType::Hydrogen, 10);
+
+	Toolbox.reset(0, 0, new FourwayPipe(graphics()));
+	Toolbox.reset(1, 0, new end_pipe(graphics(), ReceiveFromDir::Down));
 }
 
 GameWindow::~GameWindow()
 {
 }
 
-void GameWindow::buttonDown(Gosu::Button)
+void GameWindow::buttonDown(Gosu::Button btn)
 {
+	if (btn == Gosu::msLeft) {
+		size_t x = getMouseXInToolbox();
+		size_t y = getMouseYInToolbox();
+		if (x < int(Toolbox.width()) && y < int(Toolbox.height())) {
+			auto opt = Toolbox.get(x, y);
+			if (opt) {
+				dragdrop = std::move(opt->clone());
+			}
+		} else {
+			size_t x = getMouseXInGrid();
+			size_t y = getMouseYInGrid();
+			if (x < int(grid.width()) && y < int(grid.height())) {
+				auto opt = grid.get(x, y);
+				if (opt) {
+					dragdrop = std::move(opt->clone());
+				}
+			}
+		}
+	}
 }
 
 void GameWindow::buttonUp(Gosu::Button btn)
@@ -49,7 +72,13 @@ void GameWindow::buttonUp(Gosu::Button btn)
 		int y = getMouseYInGrid();
 		if (x < int(grid.width()) && y < int(grid.height()) && x >= 0 && y >= 0) {
 			//Machine& c = grid.at(x, y);
-			
+			if (btn == Gosu::msRight) {
+				grid.reset(x, y);
+			} else if (btn == Gosu::msLeft) {
+				if (dragdrop) {
+					grid.reset(x, y, std::move(dragdrop));
+				}
+			}
 		}
 	}
 }
@@ -58,6 +87,12 @@ void GameWindow::draw()
 {
 	std::wstringstream wss;
 	wss << Gosu::fps();
+	wss << L" - ";
+	if (grid.is_initialized()) {
+		wss << L" grid ready";
+	} else {
+		wss << L" a cell is not initialized";
+	}
 	font.draw(wss.str(), 0, 0, RenderLayer::GUI);
 	graphics().drawTriangle(input().mouseX(), input().mouseY(), Gosu::Colors::gray,
 							input().mouseX()+10, input().mouseY(), Gosu::Colors::gray,
@@ -74,9 +109,26 @@ void GameWindow::draw()
 							RenderLayer::GUI
 			);
 	}
+	ix = getMouseXInToolbox();
+	iy = getMouseYInToolbox();
+	if (ix < Toolbox.width() && iy < Toolbox.height()) {
+		double x = double(ix)/double(Toolbox.width())*toolboxwdt+toolboxx;
+		double y = double(iy)/double(Toolbox.height())*toolboxhgt+toolboxy;
+		graphics().drawQuad(x, y, Gosu::Color(128, 100, 100, 100),
+							x+toolboxwdt/double(Toolbox.width()), y, Gosu::Color(128, 100, 100, 100),
+							x+toolboxwdt/double(Toolbox.width()), y+toolboxhgt/double(Toolbox.height()), Gosu::Color(128, 100, 100, 100),
+							x, y+toolboxhgt/double(Toolbox.height()), Gosu::Color(128, 100, 100, 100),
+							RenderLayer::GUI
+			);
+	}
 	graphics().pushTransform(Gosu::translate(gridx, gridy));
 	graphics().pushTransform(Gosu::scale(gridwdt/double(grid.width()), gridhgt/double(grid.height())));
 	grid.draw();
+	graphics().popTransform();
+	graphics().popTransform();
+	graphics().pushTransform(Gosu::translate(toolboxx, toolboxy));
+	graphics().pushTransform(Gosu::scale(toolboxwdt/double(Toolbox.width()), toolboxhgt/double(Toolbox.height())));
+	Toolbox.draw();
 	graphics().popTransform();
 	graphics().popTransform();
 }
@@ -113,7 +165,9 @@ void GameWindow::update()
 
 void GameWindow::step()
 {
-	grid.update();
+	if (grid.check_initialization()) {
+		grid.update();
+	}
 }
 
 int GameWindow::getMouseXInGrid() const
@@ -124,4 +178,14 @@ int GameWindow::getMouseXInGrid() const
 int GameWindow::getMouseYInGrid() const
 {
 	return std::floor((input().mouseY()-gridy)/gridhgt*double(grid.height()));
+}
+
+int GameWindow::getMouseXInToolbox() const
+{
+	return std::floor((input().mouseX()-toolboxx)/toolboxwdt*double(Toolbox.width()));
+}
+
+int GameWindow::getMouseYInToolbox() const
+{
+	return std::floor((input().mouseY()-toolboxy)/toolboxhgt*double(Toolbox.height()));
 }

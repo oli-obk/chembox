@@ -63,3 +63,18 @@ void FourwayPipe::update()
 	}
 	particle_engine.update();
 }
+
+FourwayPipe::FourwayPipe(const FourwayPipe& rhs)
+:Machine(rhs)
+,m_pImage(rhs.m_pImage)
+,m_pFont(rhs.m_pFont)
+,connectors({
+	createConnector(ReceiveFromDir::Up),
+	createConnector(ReceiveFromDir::Down),
+	createConnector(ReceiveFromDir::Left),
+	createConnector(ReceiveFromDir::Right),
+	})
+,energy(rhs.energy)
+,particles(rhs.particles)
+{
+}

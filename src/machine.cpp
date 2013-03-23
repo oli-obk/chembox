@@ -18,6 +18,13 @@ Machine::~Machine()
 {
 }
 
+Machine::Machine(const Machine& rhs)
+:particle_engine(rhs.particle_engine)
+{
+	m_destroyed = true;
+	m_initialized = false;
+}
+
 void Machine::communicate()
 {
 	for (auto& c:connectors) {
@@ -28,15 +35,26 @@ void Machine::communicate()
 
 void Machine::Initialize(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right)
 {
-	assert(!m_initialized);
+	m_initialized = false;
 	ReceiveFromDir opposite[4] = {ReceiveFromDir::Down, ReceiveFromDir::Up, ReceiveFromDir::Right, ReceiveFromDir::Left};
 	optional<Machine&> machines[] = {up, down, left, right};
 	for (auto dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right})
 	{
 		int d = static_cast<int>(dir);
+		// no connector? nothing to do
 		if (!connectors[d]) continue;
-		if (!machines[d]) continue;
-		connectors[d]->connect(*(machines[d]->connectors[int(opposite[d])]));
+		// already connected? nothing to do
+		if (connectors[d]->connected()) continue;
+		if (!machines[d]) {
+			// there is nothing here to connect to
+			return;
+		}
+		auto& con = machines[d]->connectors[int(opposite[d])];
+		if (!con) {
+			// there is a cell but no connector
+			return;
+		}
+		connectors[d]->connect(*con);
 	}
 	m_initialized = true;
 }

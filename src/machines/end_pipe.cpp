@@ -38,3 +38,12 @@ void end_pipe::update()
 	auto parts = con.pop();
 	con.push(parts);
 }
+
+end_pipe::end_pipe(const end_pipe& rhs)
+:Machine(rhs)
+,m_pImage(rhs.m_pImage)
+,render_dir(rhs.render_dir)
+,receive_dir(rhs.receive_dir)
+,con(createConnector(receive_dir))
+{
+}

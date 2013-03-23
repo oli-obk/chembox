@@ -2,18 +2,35 @@
 #define GRID_HPP
 
 #include <Gosu/Graphics.hpp>
-template <class T, size_t sidepow>
+template <class T, size_t wdt, size_t hgt>
 class Grid
 {
 private:
-	std::array<std::unique_ptr<T>, 1<<(sidepow*2)> m_data;
-	constexpr size_t index(size_t x, size_t y) { return x + (y<<sidepow); }
+	std::array<std::unique_ptr<T>, wdt*hgt> m_data;
+	constexpr size_t index(size_t x, size_t y) { return x + y*wdt; }
 	std::unique_ptr<T>& element(size_t x, size_t y) { return m_data[index(x,y)]; }
 	Gosu::Graphics& graphics;
+	bool _initialized;
+	void initialize(size_t x, size_t y)
+	{
+		if (get(x, y)) get(x, y)->Initialize(get(x, y-1), get(x, y+1), get(x-1, y), get(x+1, y));
+	}
 public:
-	Grid(Gosu::Graphics& g):graphics(g) {}
-	constexpr size_t width() const { return 1<<sidepow; }
-	constexpr size_t height() const { return width(); }
+	bool is_initialized() const { return _initialized; }
+	bool check_initialization()
+	{
+		if (_initialized) return true;
+		for (auto& ptr:m_data) {
+			if (!ptr) continue;
+			if (!ptr->isInitialized()) {
+				return false;
+			}
+		}
+		return (_initialized = true);
+	}
+	Grid(Gosu::Graphics& g):graphics(g),_initialized(true) {}
+	constexpr size_t width() const { return wdt; }
+	constexpr size_t height() const { return hgt; }
 	//T& operator[](size_t x, size_t y) { return m_data[x+y<<sidepow]; }
 	//const T& operator[](size_t x, size_t y) const { return m_data[x+y<<sidepow]; }
 	T& at(size_t x, size_t y) { assert(x < width()); assert(y < height()); return *element(x, y); }
@@ -25,6 +42,7 @@ public:
 		if (!element(x, y)) return optional<T&>();
 		return optional<T&>(*element(x, y));
 	}
+
 	void update()
 	{
 		for (size_t y = 0; y < height(); y++) {
@@ -36,6 +54,7 @@ public:
 			}
 		}
 	}
+
 	void draw()
 	{
 		for (size_t y = 0; y < height(); y++) {
@@ -47,15 +66,22 @@ public:
 			}
 		}
 	}
-	void reset(size_t x, size_t y, T* ptr)
+
+	void reset(size_t x, size_t y, T* ptr = nullptr)
 	{
 		reset(x, y, std::unique_ptr<T>(ptr));
 	}
+
 	void reset(size_t x, size_t y, std::unique_ptr<T> ptr)
 	{
+		_initialized = false;
 		assert(x < width()); assert(y < height());
 		element(x, y) = std::move(ptr);
-		element(x, y)->Initialize(get(x, y-1), get(x, y+1), get(x-1, y), get(x+1, y));
+		initialize(x, y);
+		initialize(x, y-1);
+		initialize(x, y+1);
+		initialize(x-1, y);
+		initialize(x+1, y);
 	}
 };
 

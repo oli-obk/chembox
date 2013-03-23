@@ -19,6 +19,13 @@ private:
 	optional<Connector&> other;
 	builtin_wrapper<bool, true> hasUnpoppedParticles;
 public:
+	~Connector()
+	{
+		if (connected()) {
+			disconnect();
+		}
+	}
+	bool connected() const { return other; }
 	void connect(Connector& c)
 	{
 		assert(!other);
@@ -28,7 +35,6 @@ public:
 	void disconnect()
 	{
 		assert(other);
-		assert(!hasUnpoppedParticles);
 		other->other.destruct();
 		other.destruct();
 	}
@@ -67,15 +73,18 @@ private:
 	optional<Connector> connectors[4];
 	bool m_initialized;
 protected:
+	Machine(const Machine& rhs);
 	ParticleEngine particle_engine;
 	Connector& createConnector(ReceiveFromDir dir);
 public:
 	void Initialize(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right);
+	bool isInitialized() const { return m_initialized; }
 	void Destroy() { assert(!m_destroyed); m_destroyed = true; }
 	bool isDestroyed() const { return m_destroyed; }
 	virtual void draw() = 0;
 	virtual bool accepts(ParticleState, ReceiveFromDir) const { return false; }
 	virtual void update() = 0;
+	virtual std::unique_ptr<Machine> clone() = 0;
 	void communicate();
 	void insert(ParticleState, ParticleType, int count);
 	Machine(Gosu::Graphics& g);
