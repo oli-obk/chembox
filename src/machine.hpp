@@ -36,6 +36,7 @@ private:
 	optional<Connector> connectors[4];
 protected:
 	ParticleEngine particle_engine;
+	const ParticleMap& getParticles() const { return particles; };
 public:
 	Connector& createConnector(ReceiveFromDir dir);
 	void Destroy() { assert(!m_destroyed); m_destroyed = true; }
@@ -46,6 +47,7 @@ public:
 	void receive(ParticleState, ParticleType, int count, const Connector&);
 	void receive(ParticleEnergy);
 	void send(ParticleState, ParticleType, int count, Connector&);
+	void insert(ParticleState, ParticleType, int count);
 	Machine(Gosu::Graphics& g);
 	virtual ~Machine();
 };

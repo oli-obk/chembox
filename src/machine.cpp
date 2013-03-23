@@ -17,3 +17,7 @@ Machine::~Machine()
 {
 }
 
+void Machine::insert(ParticleState state, ParticleType type, int count)
+{
+	particles[state][type] += count;
+}
