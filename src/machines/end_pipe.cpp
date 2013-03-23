@@ -35,4 +35,6 @@ void end_pipe::draw()
 
 void end_pipe::update()
 {
+	auto parts = con.pop();
+	con.push(parts);
 }

@@ -13,7 +13,10 @@ private:
 	static std::weak_ptr<Gosu::Font> s_pFont;
 	std::shared_ptr<Gosu::Image> m_pImage;
 	std::shared_ptr<Gosu::Font> m_pFont;
+	std::reference_wrapper<Connector> connectors[4];
+	ParticleEnergy energy;
 public:
+	ParticleMap particles;
 	FourwayPipe(Gosu::Graphics&);
 	virtual ~FourwayPipe();
 

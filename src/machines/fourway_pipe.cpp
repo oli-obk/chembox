@@ -13,6 +13,12 @@ FourwayPipe::FourwayPipe(Gosu::Graphics& g)
 :Machine(g)
 ,m_pImage(s_pImage.lock())
 ,m_pFont(s_pFont.lock())
+,connectors({
+	createConnector(ReceiveFromDir::Up),
+	createConnector(ReceiveFromDir::Down),
+	createConnector(ReceiveFromDir::Left),
+	createConnector(ReceiveFromDir::Right),
+	})
 {
 	if (!m_pImage) {
 		assert(!m_pFont);
@@ -37,14 +43,23 @@ bool FourwayPipe::accepts(ParticleState state, ReceiveFromDir) const
 void FourwayPipe::draw()
 {
 	m_pImage->draw(0, 0, RenderLayer::Machines, 1.0/double(m_pImage->width()), 1.0/double(m_pImage->height()));
-	if (getParticles().count(ParticleState::Gas) && getParticles().at(ParticleState::Gas).count(ParticleType::Hydrogen)) {
+	size_t count = particles.count(ParticleState::Gas, ParticleType::Hydrogen);
+	if (count != 0) {
 		std::wstringstream wss;
-		wss << getParticles().at(ParticleState::Gas).at(ParticleType::Hydrogen);
+		wss << count;
 		m_pFont->drawRel(wss.str(), 0.5, 0.5, RenderLayer::Machines+1, 0.5, 0.4, 0.05, 0.05, Gosu::Colors::red);
 	}
 }
 
 void FourwayPipe::update()
 {
+	for (Connector& c:connectors) {
+		particles += c.pop();
+	}
+	ParticleMap distribution = particles / 4;
+	particles -= distribution*4;
+	for (Connector& c:connectors) {
+		c.push(distribution);
+	}
 	particle_engine.update();
 }

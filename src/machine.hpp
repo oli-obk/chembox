@@ -17,36 +17,66 @@ private:
 	ParticleMap particles;
 	ParticleEnergy energy;
 	optional<Connector&> other;
+	builtin_wrapper<bool, true> hasUnpoppedParticles;
 public:
-	void connect(Connector& c) { assert(!other); other.construct(c); }
-	void disconnect() { assert(other); other.destruct(); };
+	void connect(Connector& c)
+	{
+		assert(!other);
+		other.construct(c);
+		c.other.construct(*this);
+	}
+	void disconnect()
+	{
+		assert(other);
+		assert(!hasUnpoppedParticles);
+		other->other.destruct();
+		other.destruct();
+	}
 	void push(ParticleState state, ParticleType type, unsigned count)
 	{
-		particles[state][type] += count;
+		assert(other);
+		assert(!hasUnpoppedParticles);
+		hasUnpoppedParticles = true;
+		particles.add(state, type, count);
 	}
-	ParticleMap pop() { return std::move(particles); }
+	void push(ParticleMap parts)
+	{
+		assert(other);
+		assert(!hasUnpoppedParticles);
+		hasUnpoppedParticles = true;
+		particles += parts;
+	}
+	ParticleMap pop()
+	{
+		assert(other);
+		assert(hasUnpoppedParticles);
+		hasUnpoppedParticles = false;
+		return std::move(particles);
+	}
+	void communicate()
+	{
+		assert(other);
+		std::swap(particles, other->particles);
+	}
 };
 
 class Machine
 {
 private:
-	ParticleMap particles;
-	ParticleEnergy energy;
 	bool m_destroyed;
 	optional<Connector> connectors[4];
+	bool m_initialized;
 protected:
 	ParticleEngine particle_engine;
-	const ParticleMap& getParticles() const { return particles; };
-public:
 	Connector& createConnector(ReceiveFromDir dir);
+public:
+	void Initialize(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right);
 	void Destroy() { assert(!m_destroyed); m_destroyed = true; }
 	bool isDestroyed() const { return m_destroyed; }
 	virtual void draw() = 0;
 	virtual bool accepts(ParticleState, ReceiveFromDir) const { return false; }
 	virtual void update() = 0;
-	void receive(ParticleState, ParticleType, int count, const Connector&);
-	void receive(ParticleEnergy);
-	void send(ParticleState, ParticleType, int count, Connector&);
+	void communicate();
 	void insert(ParticleState, ParticleType, int count);
 	Machine(Gosu::Graphics& g);
 	virtual ~Machine();

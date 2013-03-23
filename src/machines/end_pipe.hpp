@@ -14,7 +14,7 @@ private:
 	std::shared_ptr<Gosu::Image> m_pImage;
 	double render_dir;
 	ReceiveFromDir receive_dir;
-	Connector con;
+	Connector& con;
 public:
 	end_pipe(Gosu::Graphics& g, ReceiveFromDir dir);
 	virtual ~end_pipe();

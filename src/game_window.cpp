@@ -29,7 +29,7 @@ GameWindow::GameWindow()
 		grid.reset(x, 0, new end_pipe(graphics(), ReceiveFromDir::Down));
 		grid.reset(x, grid.height()-1, new end_pipe(graphics(), ReceiveFromDir::Up));
 	}
-	grid.at(1,1).insert(ParticleState::Gas, ParticleType::Hydrogen, 10);
+	static_cast<FourwayPipe&>(grid.at(1,1)).particles.add(ParticleState::Gas, ParticleType::Hydrogen, 10);
 }
 
 GameWindow::~GameWindow()

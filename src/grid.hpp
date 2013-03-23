@@ -29,8 +29,10 @@ public:
 	{
 		for (size_t y = 0; y < height(); y++) {
 			for (size_t x = 0; x < width(); x++) {
-				if (!element(x, y)) continue;
-				element(x, y) -> update();
+				auto& e = element(x, y);
+				if (!e) continue;
+				e -> update();
+				e -> communicate();
 			}
 		}
 	}
@@ -53,6 +55,7 @@ public:
 	{
 		assert(x < width()); assert(y < height());
 		element(x, y) = std::move(ptr);
+		element(x, y)->Initialize(get(x, y-1), get(x, y+1), get(x-1, y), get(x+1, y));
 	}
 };
 
