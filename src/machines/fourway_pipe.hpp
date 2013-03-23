@@ -10,7 +10,9 @@ class FourwayPipe : public Machine
 {
 private:
 	static std::weak_ptr<Gosu::Image> s_pImage;
+	static std::weak_ptr<Gosu::Font> s_pFont;
 	std::shared_ptr<Gosu::Image> m_pImage;
+	std::shared_ptr<Gosu::Font> m_pFont;
 public:
 	FourwayPipe(Gosu::Graphics&);
 	virtual ~FourwayPipe();
