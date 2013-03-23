@@ -2,12 +2,17 @@
 #define GRID_HPP
 
 #include <Gosu/Graphics.hpp>
-template <class T, size_t wdt, size_t hgt>
+#include "machine.hpp"
+
 class Grid
 {
+public:
+	typedef Machine T;
 private:
-	std::array<std::unique_ptr<T>, wdt*hgt> m_data;
-	constexpr size_t index(size_t x, size_t y) { return x + y*wdt; }
+	std::vector<std::unique_ptr<T>> m_data;
+	size_t wdt, hgt;
+	size_t index(size_t x, size_t y) const { return x + y*wdt; }
+	const std::unique_ptr<T>& element(size_t x, size_t y) const { return m_data[index(x,y)]; }
 	std::unique_ptr<T>& element(size_t x, size_t y) { return m_data[index(x,y)]; }
 	Gosu::Graphics& graphics;
 	bool _initialized;
@@ -15,6 +20,7 @@ private:
 	{
 		if (get(x, y)) get(x, y)->Initialize(get(x, y-1), get(x, y+1), get(x-1, y), get(x+1, y));
 	}
+	Grid(const Grid&) = delete;
 public:
 	bool is_initialized() const { return _initialized; }
 	bool check_initialization()
@@ -28,9 +34,15 @@ public:
 		}
 		return (_initialized = true);
 	}
-	Grid(Gosu::Graphics& g):graphics(g),_initialized(true) {}
-	constexpr size_t width() const { return wdt; }
-	constexpr size_t height() const { return hgt; }
+	Grid(Gosu::Graphics& g, size_t wdt, size_t hgt)
+	:m_data(wdt*hgt),
+	wdt(wdt),
+	hgt(hgt),
+	graphics(g),
+	_initialized(true)
+	{}
+	size_t width() const { return wdt; }
+	size_t height() const { return hgt; }
 	//T& operator[](size_t x, size_t y) { return m_data[x+y<<sidepow]; }
 	//const T& operator[](size_t x, size_t y) const { return m_data[x+y<<sidepow]; }
 	T& at(size_t x, size_t y) { assert(x < width()); assert(y < height()); return *element(x, y); }

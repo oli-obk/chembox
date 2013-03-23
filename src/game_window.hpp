@@ -27,8 +27,8 @@ private:
 public:
 protected:
     Gosu::Font font;
-	Grid<Machine, 8, 8> grid;
-	Grid<Machine, 2, 1> Toolbox;
+	Grid grid;
+	Grid Toolbox;
 	std::unique_ptr<Machine> dragdrop;
 public:
 	int getMouseXInGrid() const;

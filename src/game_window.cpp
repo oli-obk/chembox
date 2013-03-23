@@ -16,8 +16,8 @@
 GameWindow::GameWindow()
 :Gosu::Window(1200, 800, false)
 ,font(graphics(), Gosu::defaultFontName(), 20)
-,grid(graphics())
-,Toolbox(graphics())
+,grid(graphics(), 8, 8)
+,Toolbox(graphics(), 2, 1)
 {
 	for (size_t y = 1; y < grid.height() - 1; y++) {
 		grid.reset(0, y, new end_pipe(graphics(), ReceiveFromDir::Right));
