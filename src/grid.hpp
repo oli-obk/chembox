@@ -23,6 +23,15 @@ private:
 	Grid(const Grid&) = delete;
 public:
 	bool is_initialized() const { return _initialized; }
+    void modified(size_t x, size_t y)
+    {
+        _initialized = false;
+		initialize(x, y);
+		initialize(x, y-1);
+		initialize(x, y+1);
+		initialize(x-1, y);
+		initialize(x+1, y);
+    }
 	bool check_initialization()
 	{
 		if (_initialized) return true;
@@ -98,11 +107,7 @@ public:
 		_initialized = false;
 		assert(x < width()); assert(y < height());
 		element(x, y) = std::move(ptr);
-		initialize(x, y);
-		initialize(x, y-1);
-		initialize(x, y+1);
-		initialize(x-1, y);
-		initialize(x+1, y);
+        modified(x, y);
 	}
 };
 

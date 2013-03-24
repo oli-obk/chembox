@@ -68,7 +68,10 @@ void GameWindow::buttonDown(Gosu::Button btn)
 			return true;
 		};
 		if (!fun(getMouseXInToolbox(), getMouseYInToolbox(), Toolbox)) {
-			fun(getMouseXInGrid(), getMouseYInGrid(), grid);
+            size_t ix = getMouseXInGrid();
+            size_t iy = getMouseYInGrid();
+			fun(ix, iy, grid);
+            grid.modified(ix, iy);
 		}
 	}
 }
