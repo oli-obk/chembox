@@ -10,19 +10,17 @@
 class end_pipe : public Machine
 {
 private:
-	static std::weak_ptr<Gosu::Image> s_pImage;
-	std::shared_ptr<Gosu::Image> m_pImage;
+	static std::array<std::weak_ptr<Gosu::Image>, 5> s_pImage;
+	std::array<std::shared_ptr<Gosu::Image>, 5> m_pImage;
 	double render_dir;
-	ReceiveFromDir receive_dir;
-	Connector& con;
+	size_t version, rotation;
 	end_pipe(const end_pipe& rhs);
-	void change_dir(ReceiveFromDir newdir);
+	void updateSettings(size_t rotation, size_t version);
 public:
-	end_pipe(Gosu::Graphics& g, ReceiveFromDir dir);
+	end_pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version = 0);
 	virtual ~end_pipe();
 
 public:
-	virtual bool accepts(ParticleState, ReceiveFromDir) const;
 	virtual void draw();
 	virtual void update();
 	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<end_pipe>(new end_pipe(*this)); }

@@ -13,7 +13,6 @@ private:
 	static std::weak_ptr<Gosu::Font> s_pFont;
 	std::shared_ptr<Gosu::Image> m_pImage;
 	std::shared_ptr<Gosu::Font> m_pFont;
-	std::reference_wrapper<Connector> connectors[4];
 	ParticleEnergy energy;
 public:
 	ParticleMap particles;
@@ -23,7 +22,6 @@ public:
 
 	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<Machine>(new FourwayPipe(*this)); }
 public:
-	virtual bool accepts(ParticleState, ReceiveFromDir) const;
 	virtual void draw();
 	virtual void update();
 };

@@ -18,7 +18,10 @@ private:
 	ParticleEnergy energy;
 	optional<Connector&> other;
 	builtin_wrapper<bool, true> hasUnpoppedParticles;
+	Connector(const Connector&) = delete;
+	Connector& operator=(const Connector&) = delete;
 public:
+	Connector() = default;
 	~Connector()
 	{
 		if (connected()) {
@@ -62,6 +65,8 @@ public:
 	void communicate()
 	{
 		assert(other);
+		assert(hasUnpoppedParticles);
+		assert(other->hasUnpoppedParticles);
 		std::swap(particles, other->particles);
 	}
 };
@@ -72,17 +77,21 @@ private:
 	bool m_destroyed;
 	optional<Connector> connectors[4];
 	bool m_initialized;
+	void ReInitialize() { m_initialized = false; }
 protected:
 	Machine(const Machine& rhs);
 	ParticleEngine particle_engine;
-	Connector& createConnector(ReceiveFromDir dir);
+	void createConnector(ReceiveFromDir dir);
+	optional<Connector&> getConnector(ReceiveFromDir dir);
+	optional<const Connector&> getConnector(ReceiveFromDir dir) const;
+	void destroyConnector(ReceiveFromDir dir);
+	void destroyConnectors();
 public:
 	void Initialize(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right);
 	bool isInitialized() const { return m_initialized; }
 	void Destroy() { assert(!m_destroyed); m_destroyed = true; }
 	bool isDestroyed() const { return m_destroyed; }
 	virtual void draw() = 0;
-	virtual bool accepts(ParticleState, ReceiveFromDir) const { return false; }
 	virtual void update() = 0;
 	virtual std::unique_ptr<Machine> clone() = 0;
 	virtual void Action(size_t /* action_id */) {};

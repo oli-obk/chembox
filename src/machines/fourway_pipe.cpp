@@ -13,13 +13,11 @@ FourwayPipe::FourwayPipe(Gosu::Graphics& g)
 :Machine(g)
 ,m_pImage(s_pImage.lock())
 ,m_pFont(s_pFont.lock())
-,connectors({
-	createConnector(ReceiveFromDir::Up),
-	createConnector(ReceiveFromDir::Down),
-	createConnector(ReceiveFromDir::Left),
-	createConnector(ReceiveFromDir::Right),
-	})
 {
+	createConnector(ReceiveFromDir::Up);
+	createConnector(ReceiveFromDir::Down);
+	createConnector(ReceiveFromDir::Left);
+	createConnector(ReceiveFromDir::Right);
 	if (!m_pImage) {
 		assert(!m_pFont);
 		m_pImage.reset(new Gosu::Image(g,L"fourway_pipe.png", true));
@@ -31,13 +29,6 @@ FourwayPipe::FourwayPipe(Gosu::Graphics& g)
 
 FourwayPipe::~FourwayPipe()
 {
-}
-
-bool FourwayPipe::accepts(ParticleState state, ReceiveFromDir) const
-{
-	if (isDestroyed()) return false;
-	if (state == ParticleState::Solid) return false;
-	return true;
 }
 
 void FourwayPipe::draw()
@@ -53,13 +44,13 @@ void FourwayPipe::draw()
 
 void FourwayPipe::update()
 {
-	for (Connector& c:connectors) {
-		particles += c.pop();
+	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
+		particles += getConnector(dir)->pop();
 	}
 	ParticleMap distribution = particles / 4;
 	particles -= distribution*4;
-	for (Connector& c:connectors) {
-		c.push(distribution);
+	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
+		getConnector(dir)->push(distribution);
 	}
 	particle_engine.update();
 }
@@ -68,12 +59,6 @@ FourwayPipe::FourwayPipe(const FourwayPipe& rhs)
 :Machine(rhs)
 ,m_pImage(rhs.m_pImage)
 ,m_pFont(rhs.m_pFont)
-,connectors({
-	createConnector(ReceiveFromDir::Up),
-	createConnector(ReceiveFromDir::Down),
-	createConnector(ReceiveFromDir::Left),
-	createConnector(ReceiveFromDir::Right),
-	})
 ,energy(rhs.energy)
 ,particles(rhs.particles)
 {

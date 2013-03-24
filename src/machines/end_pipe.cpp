@@ -2,55 +2,60 @@
 #include "defines.hpp"
 
 
-std::weak_ptr<Gosu::Image> end_pipe::s_pImage;
+std::array<std::weak_ptr<Gosu::Image>, 5> end_pipe::s_pImage;
 
-end_pipe::end_pipe(Gosu::Graphics& g, ReceiveFromDir dir)
+end_pipe::end_pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
 :Machine(g)
-,m_pImage(s_pImage.lock())
-,con(createConnector(dir))
+,version(0)
+,rotation(0)
 {
-	if (!m_pImage) {
-		m_pImage.reset(new Gosu::Image(g,L"end_pipe.png", true));
-		s_pImage = m_pImage;
+	for (size_t i = 0; i < s_pImage.size(); i++) {
+		m_pImage[i] = s_pImage[i].lock();
 	}
-	change_dir(dir);
-}
+	if (!m_pImage[0]) {
+		assert(!m_pImage[1]);
+		assert(!m_pImage[2]);
+		assert(!m_pImage[3]);
+		assert(!m_pImage[4]);
+		m_pImage[0].reset(new Gosu::Image(g,L"end_pipe.png", true));
+		m_pImage[1].reset(new Gosu::Image(g,L"end_pipe2.png", true));
+		m_pImage[2].reset(new Gosu::Image(g,L"end_pipe2opposite.png", true));
+		m_pImage[3].reset(new Gosu::Image(g,L"end_pipe3.png", true));
+		m_pImage[4].reset(new Gosu::Image(g,L"end_pipe4.png", true));
 
-void end_pipe::change_dir(ReceiveFromDir newdir)
-{
-	receive_dir = newdir;
-	double angles[] = { 0, 180, -90, 90 };
-	render_dir = angles[int(newdir)];
+		for (size_t i = 0; i < s_pImage.size(); i++) {
+			s_pImage[i] = m_pImage[i];
+		}
+	}
+	updateSettings(int(dir), version);
 }
 
 end_pipe::~end_pipe()
 {
 }
 
-bool end_pipe::accepts(ParticleState state, ReceiveFromDir dir) const
-{
-	if (state == ParticleState::Solid) return false;
-	return dir == receive_dir;
-}
-
 void end_pipe::draw()
 {
-	m_pImage->drawRot(0.5, 0.5, RenderLayer::Machines, render_dir, 0.5, 0.5, 1.0/double(m_pImage->width()), 1.0/double(m_pImage->height()));
+	m_pImage[version]->drawRot(0.5, 0.5, RenderLayer::Machines, render_dir, 0.5, 0.5, 1.0/double(m_pImage[version]->width()), 1.0/double(m_pImage[version]->height()));
 }
 
 void end_pipe::update()
 {
-	auto parts = con.pop();
-	con.push(parts);
+	for (auto dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
+		auto con = getConnector(dir);
+		if (!con) continue;
+		auto parts = con->pop();
+		con->push(parts);
+	}
 }
 
 end_pipe::end_pipe(const end_pipe& rhs)
 :Machine(rhs)
-,m_pImage(rhs.m_pImage)
-,render_dir(rhs.render_dir)
-,receive_dir(rhs.receive_dir)
-,con(createConnector(receive_dir))
 {
+	for (int i:{0, 1, 2, 3, 4}) {
+		m_pImage[i] = rhs.m_pImage[i];
+	}
+	updateSettings(rhs.rotation, rhs.version);
 }
 
 void end_pipe::Action(size_t id)
@@ -58,14 +63,12 @@ void end_pipe::Action(size_t id)
 	switch (id) {
 		case 0:
 			{
-				ReceiveFromDir next[] = {
-					ReceiveFromDir::Right,
-					ReceiveFromDir::Left,
-					ReceiveFromDir::Up,
-					ReceiveFromDir::Down
-				};
-				change_dir(next[int(receive_dir)]);
+				int next[] = { 3, 2, 0, 1};
+				updateSettings(next[rotation], version);
 			}
+		break;
+		case 1:
+			updateSettings(rotation, version+1);
 		break;
 		default:
 		break;
@@ -74,5 +77,43 @@ void end_pipe::Action(size_t id)
 
 size_t end_pipe::numActions() const
 {
-	return 1;
+	return 2;
+}
+
+void end_pipe::updateSettings(size_t rot, size_t v)
+{
+	rot %= 4;
+	v %= 5;
+	int next[] = { 3, 2, 0, 1};
+	int opposite[] = { 1, 0, 3, 2};
+	int prev[] = { 2, 3, 1, 0};
+	destroyConnectors();
+	switch (v) {
+		case 0:
+			createConnector(static_cast<ReceiveFromDir>(rot));
+		break;
+		case 1:
+			createConnector(static_cast<ReceiveFromDir>(rot));
+			createConnector(static_cast<ReceiveFromDir>(next[rot]));
+		break;
+		case 2:
+			createConnector(static_cast<ReceiveFromDir>(rot));
+			createConnector(static_cast<ReceiveFromDir>(opposite[rot]));
+		break;
+		case 3:
+			createConnector(static_cast<ReceiveFromDir>(rot));
+			createConnector(static_cast<ReceiveFromDir>(opposite[rot]));
+			createConnector(static_cast<ReceiveFromDir>(next[rot]));
+		break;
+		case 4:
+			createConnector(static_cast<ReceiveFromDir>(rot));
+			createConnector(static_cast<ReceiveFromDir>(opposite[rot]));
+			createConnector(static_cast<ReceiveFromDir>(next[rot]));
+			createConnector(static_cast<ReceiveFromDir>(prev[rot]));
+		break;
+	}
+	double angles[] = { 0, 180, -90, 90 };
+	render_dir = angles[rot];
+	rotation = rot;
+	version = v;
 }

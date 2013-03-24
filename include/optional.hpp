@@ -26,12 +26,13 @@ optional<T> make_optional(T&& val)
 template<typename T>
 class optional<T, typename std::enable_if<!std::is_reference<T>::value>::type>
 {
+	friend class optional<T&>;
+	friend class optional<const T&>;
 private:
     bool valid;
-
+    // needs to be a union, b/c in a union nothing is initialized by default
     union {
         T value;
-        std::array<char, sizeof(T)> data;
     };
     
     void destruct_if_valid()
@@ -167,6 +168,16 @@ public:
     {
         value = other.value;
     }
+
+	template<typename T5>
+	explicit optional(const optional<T5>& other)
+	{
+		if (!other) {
+			value = nullptr;
+		} else {
+			value = const_cast<T*>(&other.value);
+		}
+	}
     
     friend class optional<const T&>;
     

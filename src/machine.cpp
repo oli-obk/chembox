@@ -7,11 +7,11 @@ Machine::Machine(Gosu::Graphics& g)
 	m_initialized = false;
 }
 
-Connector& Machine::createConnector(ReceiveFromDir dir)
+void Machine::createConnector(ReceiveFromDir dir)
 {
+	ReInitialize();
 	assert(!connectors[int(dir)]);
 	connectors[int(dir)].construct();
-	return *connectors[int(dir)];
 }
 
 Machine::~Machine()
@@ -57,4 +57,29 @@ void Machine::Initialize(optional<Machine&> up, optional<Machine&> down, optiona
 		connectors[d]->connect(*con);
 	}
 	m_initialized = true;
+}
+
+
+optional<Connector&> Machine::getConnector(ReceiveFromDir dir)
+{
+	return optional<Connector&>(connectors[int(dir)]);
+}
+
+optional<const Connector&> Machine::getConnector(ReceiveFromDir dir) const
+{
+	return optional<const Connector&>(connectors[int(dir)]);
+}
+
+void Machine::destroyConnector(ReceiveFromDir dir)
+{
+	ReInitialize();
+	connectors[int(dir)].destruct();
+}
+
+void Machine::destroyConnectors()
+{
+	ReInitialize();
+	for (auto& c:connectors) {
+		c.destruct();
+	}
 }
