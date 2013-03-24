@@ -90,6 +90,9 @@ void GameWindow::buttonUp(Gosu::Button btn)
 				}
 			}
 		}
+        if (dragdrop) {
+            dragdrop.reset();
+        }
 	}
 }
 
