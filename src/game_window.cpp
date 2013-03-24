@@ -20,20 +20,20 @@ GameWindow::GameWindow()
 ,Toolbox(graphics(), 2, 1)
 {
 	for (size_t y = 1; y < grid.height() - 1; y++) {
-		grid.reset(0, y, new end_pipe(graphics(), ReceiveFromDir::Right));
-		grid.reset(grid.width()-1, y, new end_pipe(graphics(), ReceiveFromDir::Left));
+		grid.reset(0, y, new EndPipe(graphics(), ReceiveFromDir::Right));
+		grid.reset(grid.width()-1, y, new EndPipe(graphics(), ReceiveFromDir::Left));
 		for (size_t x = 1; x < grid.width() - 1; x++) {
 			grid.reset(x, y, new FourwayPipe(graphics()));
 		}
 	}
 	for (size_t x = 1; x < grid.height() - 1; x++) {
-		grid.reset(x, 0, new end_pipe(graphics(), ReceiveFromDir::Down));
-		grid.reset(x, grid.height()-1, new end_pipe(graphics(), ReceiveFromDir::Up));
+		grid.reset(x, 0, new EndPipe(graphics(), ReceiveFromDir::Down));
+		grid.reset(x, grid.height()-1, new EndPipe(graphics(), ReceiveFromDir::Up));
 	}
 	static_cast<FourwayPipe&>(grid.at(1,1)).particles.add(ParticleState::Gas, ParticleType::Hydrogen, 10);
 
 	Toolbox.reset(0, 0, new FourwayPipe(graphics()));
-	Toolbox.reset(1, 0, new end_pipe(graphics(), ReceiveFromDir::Down));
+	Toolbox.reset(1, 0, new EndPipe(graphics(), ReceiveFromDir::Down));
 }
 
 GameWindow::~GameWindow()

@@ -2,9 +2,9 @@
 #include "defines.hpp"
 
 
-std::array<std::weak_ptr<Gosu::Image>, 5> end_pipe::s_pImage;
+std::array<std::weak_ptr<Gosu::Image>, 5> EndPipe::s_pImage;
 
-end_pipe::end_pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
+EndPipe::EndPipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
 :Machine(g)
 ,version(0)
 ,rotation(0)
@@ -30,16 +30,16 @@ end_pipe::end_pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
 	updateSettings(int(dir), version);
 }
 
-end_pipe::~end_pipe()
+EndPipe::~EndPipe()
 {
 }
 
-void end_pipe::draw()
+void EndPipe::draw()
 {
 	m_pImage[version]->drawRot(0.5, 0.5, RenderLayer::Machines, render_dir, 0.5, 0.5, 1.0/double(m_pImage[version]->width()), 1.0/double(m_pImage[version]->height()));
 }
 
-void end_pipe::update()
+void EndPipe::update()
 {
 	for (auto dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
 		auto con = getConnector(dir);
@@ -49,7 +49,7 @@ void end_pipe::update()
 	}
 }
 
-end_pipe::end_pipe(const end_pipe& rhs)
+EndPipe::EndPipe(const EndPipe& rhs)
 :Machine(rhs)
 {
 	for (int i:{0, 1, 2, 3, 4}) {
@@ -58,7 +58,7 @@ end_pipe::end_pipe(const end_pipe& rhs)
 	updateSettings(rhs.rotation, rhs.version);
 }
 
-void end_pipe::Action(size_t id)
+void EndPipe::Action(size_t id)
 {
 	switch (id) {
 		case 0:
@@ -75,12 +75,12 @@ void end_pipe::Action(size_t id)
 	}
 }
 
-size_t end_pipe::numActions() const
+size_t EndPipe::numActions() const
 {
 	return 2;
 }
 
-void end_pipe::updateSettings(size_t rot, size_t v)
+void EndPipe::updateSettings(size_t rot, size_t v)
 {
 	rot %= 4;
 	v %= 5;
