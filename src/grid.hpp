@@ -62,7 +62,16 @@ public:
 				auto& e = element(x, y);
 				if (!e) continue;
 				e -> update();
-				e -> communicate();
+			}
+		}
+		for (size_t y = 0; y < height(); y++) {
+			for (size_t x = 0; x < width(); x++) {
+				auto& e = element(x, y);
+				if (!e) continue;
+				// only let every second one communicate
+				if ((y%2 && x%2) || (!(y%2) && !(x%2))) {
+					e -> communicate();
+				}
 			}
 		}
 	}

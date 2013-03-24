@@ -17,7 +17,12 @@ private:
 	ParticleMap particles;
 	ParticleEnergy energy;
 	optional<Connector&> other;
-	builtin_wrapper<bool, true> hasUnpoppedParticles;
+#ifndef NDEBUG
+    enum class ConnectorState{
+        ReadyToPop, ReadyToPush, Pushing
+    };
+	builtin_wrapper<ConnectorState, ConnectorState::ReadyToPop> __state;
+#endif //NDEBUG
 	Connector(const Connector&) = delete;
 	Connector& operator=(const Connector&) = delete;
 public:
@@ -35,38 +40,62 @@ public:
 		other.construct(c);
 		c.other.construct(*this);
 	}
+
 	void disconnect()
 	{
 		assert(other);
 		other->other.destruct();
 		other.destruct();
 	}
+
 	void push(ParticleState state, ParticleType type, unsigned count)
 	{
 		assert(other);
-		assert(!hasUnpoppedParticles);
-		hasUnpoppedParticles = true;
+#ifndef NDEBUG
+		assert(__state == ConnectorState::Pushing || __state == ConnectorState::ReadyToPush);
+		__state = ConnectorState::Pushing;
+#endif //NDEBUG
 		particles.add(state, type, count);
 	}
+
+    void push()
+    {
+		assert(other);
+#ifndef NDEBUG
+		assert(__state == ConnectorState::Pushing || __state == ConnectorState::ReadyToPush);
+		__state = ConnectorState::Pushing;
+#endif //NDEBUG
+    }
+
 	void push(ParticleMap parts)
 	{
 		assert(other);
-		assert(!hasUnpoppedParticles);
-		hasUnpoppedParticles = true;
+#ifndef NDEBUG
+		assert(__state == ConnectorState::Pushing || __state == ConnectorState::ReadyToPush);
+		__state = ConnectorState::Pushing;
+#endif //NDEBUG
 		particles += parts;
 	}
+
 	ParticleMap pop()
 	{
 		assert(other);
-		assert(hasUnpoppedParticles);
-		hasUnpoppedParticles = false;
+#ifndef NDEBUG
+		assert(__state == ConnectorState::ReadyToPop);
+		__state = ConnectorState::ReadyToPush;
+#endif //NDEBUG
 		return std::move(particles);
 	}
+
 	void communicate()
 	{
 		assert(other);
-		assert(hasUnpoppedParticles);
-		assert(other->hasUnpoppedParticles);
+#ifndef NDEBUG
+		assert(__state == ConnectorState::Pushing);
+		__state = ConnectorState::ReadyToPop;
+		assert(other->__state == ConnectorState::Pushing);
+		other->__state = ConnectorState::ReadyToPop;
+#endif //NDEBUG
 		std::swap(particles, other->particles);
 	}
 };
