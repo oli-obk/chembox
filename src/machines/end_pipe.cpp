@@ -13,9 +13,14 @@ end_pipe::end_pipe(Gosu::Graphics& g, ReceiveFromDir dir)
 		m_pImage.reset(new Gosu::Image(g,L"end_pipe.png", true));
 		s_pImage = m_pImage;
 	}
-	receive_dir = dir;
+	change_dir(dir);
+}
+
+void end_pipe::change_dir(ReceiveFromDir newdir)
+{
+	receive_dir = newdir;
 	double angles[] = { 0, 180, -90, 90 };
-	render_dir = angles[int(dir)];
+	render_dir = angles[int(newdir)];
 }
 
 end_pipe::~end_pipe()
@@ -46,4 +51,28 @@ end_pipe::end_pipe(const end_pipe& rhs)
 ,receive_dir(rhs.receive_dir)
 ,con(createConnector(receive_dir))
 {
+}
+
+void end_pipe::Action(size_t id)
+{
+	switch (id) {
+		case 0:
+			{
+				ReceiveFromDir next[] = {
+					ReceiveFromDir::Right,
+					ReceiveFromDir::Left,
+					ReceiveFromDir::Up,
+					ReceiveFromDir::Down
+				};
+				change_dir(next[int(receive_dir)]);
+			}
+		break;
+		default:
+		break;
+	}
+}
+
+size_t end_pipe::numActions() const
+{
+	return 1;
 }

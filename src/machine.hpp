@@ -85,6 +85,10 @@ public:
 	virtual bool accepts(ParticleState, ReceiveFromDir) const { return false; }
 	virtual void update() = 0;
 	virtual std::unique_ptr<Machine> clone() = 0;
+	virtual void Action(size_t /* action_id */) {};
+	virtual size_t numActions() const { return 0; }
+	virtual std::string nameAction(size_t /* action_id */) const { return ""; };
+
 	void communicate();
 	void insert(ParticleState, ParticleType, int count);
 	Machine(Gosu::Graphics& g);

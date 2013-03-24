@@ -16,6 +16,7 @@ private:
 	ReceiveFromDir receive_dir;
 	Connector& con;
 	end_pipe(const end_pipe& rhs);
+	void change_dir(ReceiveFromDir newdir);
 public:
 	end_pipe(Gosu::Graphics& g, ReceiveFromDir dir);
 	virtual ~end_pipe();
@@ -25,6 +26,8 @@ public:
 	virtual void draw();
 	virtual void update();
 	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<end_pipe>(new end_pipe(*this)); }
+	size_t numActions() const;
+	void Action(size_t id);
 };
 
 #endif // END_PIPE_HPP

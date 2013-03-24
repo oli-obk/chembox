@@ -43,22 +43,32 @@ GameWindow::~GameWindow()
 void GameWindow::buttonDown(Gosu::Button btn)
 {
 	if (btn == Gosu::msLeft) {
-		size_t x = getMouseXInToolbox();
-		size_t y = getMouseYInToolbox();
-		if (x < int(Toolbox.width()) && y < int(Toolbox.height())) {
-			auto opt = Toolbox.get(x, y);
-			if (opt) {
+		optional<size_t> action_id;
+		if (input().down(Gosu::kb1)) {
+			action_id.construct(0);
+		} else if (input().down(Gosu::kb2)) {
+			action_id.construct(1);
+		} else if (input().down(Gosu::kb3)) {
+			action_id.construct(2);
+		} else if (input().down(Gosu::kb4)) {
+			action_id.construct(3);
+		}
+		auto fun = [this, action_id](size_t x, size_t y, Grid& grid) -> bool
+		{
+			if (x >= grid.width()) return false;
+			if (y >= grid.height()) return false;
+			auto opt = grid.get(x, y);
+			if (!opt) return false;
+			if (!action_id) {
 				dragdrop = std::move(opt->clone());
+				return true;
 			}
-		} else {
-			size_t x = getMouseXInGrid();
-			size_t y = getMouseYInGrid();
-			if (x < int(grid.width()) && y < int(grid.height())) {
-				auto opt = grid.get(x, y);
-				if (opt) {
-					dragdrop = std::move(opt->clone());
-				}
-			}
+			if (opt->numActions() <= *action_id) return false;
+			opt->Action(*action_id);
+			return true;
+		};
+		if (!fun(getMouseXInToolbox(), getMouseYInToolbox(), Toolbox)) {
+			fun(getMouseXInGrid(), getMouseYInGrid(), grid);
 		}
 	}
 }
