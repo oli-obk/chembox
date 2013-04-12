@@ -13,6 +13,8 @@ SET(SRC_FILES
 	src/machine.cpp
 	src/particle_engine.cpp
 	src/particle_engine.hpp
+	src/ConnectorDir.cpp
+	src/ConnectorDir.hpp
 
 	src/machines/fourway_pipe.cpp
 	src/machines/fourway_pipe.hpp
@@ -47,5 +49,5 @@ set_target_properties(ChemBox PROPERTIES RUNTIME_OUTPUT_DIRECTORY ${CMAKE_CURREN
 IF(MSVC)
 	SET_TARGET_PROPERTIES(ChemBox PROPERTIES COMPILE_FLAGS "/W4 /wd4127")
 ENDIF(MSVC)
-SET_TARGET_PROPERTIES(ChemBox PROPERTIES COMPILE_FLAGS "-std=c++0x -g -O2 -pedantic -Wall -Wextra")
+SET_TARGET_PROPERTIES(ChemBox PROPERTIES COMPILE_FLAGS "-std=c++0x -g -pedantic -Wall -Wextra")
 TARGET_LINK_LIBRARIES(ChemBox ${Gosu_LIBRARIES})

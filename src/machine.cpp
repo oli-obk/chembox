@@ -36,9 +36,8 @@ void Machine::communicate()
 void Machine::Initialize(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right)
 {
 	m_initialized = false;
-	ReceiveFromDir opposite[4] = {ReceiveFromDir::Down, ReceiveFromDir::Up, ReceiveFromDir::Right, ReceiveFromDir::Left};
-	optional<Machine&> machines[] = {up, down, left, right};
-	for (auto dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right})
+	optional<Machine&> machines[] = {up, right, down, left};
+	for (auto dir:{ReceiveFromDir::Up, ReceiveFromDir::Right, ReceiveFromDir::Down, ReceiveFromDir::Left})
 	{
 		int d = static_cast<int>(dir);
 		// no connector? nothing to do
@@ -49,7 +48,7 @@ void Machine::Initialize(optional<Machine&> up, optional<Machine&> down, optiona
 			// there is nothing here to connect to
 			return;
 		}
-		auto& con = machines[d]->connectors[int(opposite[d])];
+		auto& con = machines[d]->connectors[static_cast<int>(dir.flip())];
 		if (!con) {
 			// there is a cell but no connector
 			return;
@@ -62,12 +61,12 @@ void Machine::Initialize(optional<Machine&> up, optional<Machine&> down, optiona
 
 optional<Connector&> Machine::getConnector(ReceiveFromDir dir)
 {
-	return optional<Connector&>(connectors[int(dir)]);
+	return optional<Connector&>(connectors[static_cast<int>(dir)]);
 }
 
 optional<const Connector&> Machine::getConnector(ReceiveFromDir dir) const
 {
-	return optional<const Connector&>(connectors[int(dir)]);
+	return optional<const Connector&>(connectors[static_cast<int>(dir)]);
 }
 
 void Machine::destroyConnector(ReceiveFromDir dir)

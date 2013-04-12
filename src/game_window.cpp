@@ -20,20 +20,20 @@ GameWindow::GameWindow()
 ,Toolbox(graphics(), 2, 1)
 {
 	for (size_t y = 1; y < grid.height() - 1; y++) {
-		grid.reset(0, y, new EndPipe(graphics(), ReceiveFromDir::Right));
-		grid.reset(grid.width()-1, y, new EndPipe(graphics(), ReceiveFromDir::Left));
+		grid.reset(0, y, new EndPipe(graphics(), static_cast<int>(ReceiveFromDir::Right)));
+		grid.reset(grid.width()-1, y, new EndPipe(graphics(), static_cast<int>(ReceiveFromDir::Left)));
 		for (size_t x = 1; x < grid.width() - 1; x++) {
 			grid.reset(x, y, new FourwayPipe(graphics()));
 		}
 	}
 	for (size_t x = 1; x < grid.height() - 1; x++) {
-		grid.reset(x, 0, new EndPipe(graphics(), ReceiveFromDir::Down));
-		grid.reset(x, grid.height()-1, new EndPipe(graphics(), ReceiveFromDir::Up));
+		grid.reset(x, 0, new EndPipe(graphics(), static_cast<int>(ReceiveFromDir::Down)));
+		grid.reset(x, grid.height()-1, new EndPipe(graphics(), static_cast<int>(ReceiveFromDir::Up)));
 	}
-	static_cast<FourwayPipe&>(grid.at(1,1)).particles.add(ParticleState::Gas, ParticleType::Hydrogen, 10);
+	static_cast<FourwayPipe&>(grid.at(1,1)).particles.add(ParticleState::Gas, ParticleType::Hydrogen, 30);
 
 	Toolbox.reset(0, 0, new FourwayPipe(graphics()));
-	Toolbox.reset(1, 0, new EndPipe(graphics(), ReceiveFromDir::Down));
+	Toolbox.reset(1, 0, new EndPipe(graphics(), static_cast<int>(ReceiveFromDir::Down)));
 }
 
 GameWindow::~GameWindow()
@@ -65,13 +65,11 @@ void GameWindow::buttonDown(Gosu::Button btn)
 			}
 			if (opt->numActions() <= *action_id) return false;
 			opt->Action(*action_id);
+            grid.modified(x, y);
 			return true;
 		};
 		if (!fun(getMouseXInToolbox(), getMouseYInToolbox(), Toolbox)) {
-            size_t ix = getMouseXInGrid();
-            size_t iy = getMouseYInGrid();
-			fun(ix, iy, grid);
-            grid.modified(ix, iy);
+			fun(getMouseXInGrid(), getMouseYInGrid(), grid);
 		}
 	}
 }

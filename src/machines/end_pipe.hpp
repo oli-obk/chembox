@@ -12,12 +12,19 @@ class EndPipe : public Machine
 private:
 	static std::array<std::weak_ptr<Gosu::Image>, 5> s_pImage;
 	std::array<std::shared_ptr<Gosu::Image>, 5> m_pImage;
-	double render_dir;
 	size_t version, rotation;
 	EndPipe(const EndPipe& rhs);
-	void updateSettings(size_t rotation, size_t version);
+    void set_rotation(size_t rot);
+    void set_version(size_t version);
+    size_t get_rotation() const;
+    size_t get_version() const;
+
+	void createConnector(ReceiveFromDir dir);
+	optional<Connector&> getConnector(ReceiveFromDir dir);
+	optional<const Connector&> getConnector(ReceiveFromDir dir) const;
+	void destroyConnector(ReceiveFromDir dir);
 public:
-	EndPipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version = 0);
+	EndPipe(Gosu::Graphics& g, int dir, size_t version = 0);
 	virtual ~EndPipe();
 
 public:

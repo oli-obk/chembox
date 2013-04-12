@@ -1,11 +1,7 @@
 #ifndef MACHINE_HPP
 #define MACHINE_HPP
 
-enum class ReceiveFromDir
-{
-	Up = 0, Down = 1, Left = 2, Right = 3
-};
-
+#include "ConnectorDir.hpp"
 #include "Particle.hpp"
 #include "optional.hpp"
 #include "particle_engine.hpp"
@@ -104,7 +100,7 @@ class Machine
 {
 private:
 	bool m_destroyed;
-	optional<Connector> connectors[4];
+	std::array<optional<Connector>, 4> connectors;
 	bool m_initialized;
 	void ReInitialize() { m_initialized = false; }
 protected:

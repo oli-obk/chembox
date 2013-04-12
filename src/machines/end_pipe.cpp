@@ -4,7 +4,7 @@
 
 std::array<std::weak_ptr<Gosu::Image>, 5> EndPipe::s_pImage;
 
-EndPipe::EndPipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
+EndPipe::EndPipe(Gosu::Graphics& g, int dir, size_t version)
 :Machine(g)
 ,version(0)
 ,rotation(0)
@@ -27,7 +27,8 @@ EndPipe::EndPipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
 			s_pImage[i] = m_pImage[i];
 		}
 	}
-	updateSettings(int(dir), version);
+    set_rotation(dir);
+    set_version(version);
 }
 
 EndPipe::~EndPipe()
@@ -36,7 +37,8 @@ EndPipe::~EndPipe()
 
 void EndPipe::draw()
 {
-	m_pImage[version]->drawRot(0.5, 0.5, RenderLayer::Machines, render_dir, 0.5, 0.5, 1.0/double(m_pImage[version]->width()), 1.0/double(m_pImage[version]->height()));
+	double angles[] = { 0, 90, 180, -90 };
+	m_pImage[get_version()]->drawRot(0.5, 0.5, RenderLayer::Machines, angles[get_rotation()], 0.5, 0.5, 1.0/double(m_pImage[get_version()]->width()), 1.0/double(m_pImage[get_version()]->height()));
 }
 
 void EndPipe::update()
@@ -55,20 +57,18 @@ EndPipe::EndPipe(const EndPipe& rhs)
 	for (int i:{0, 1, 2, 3, 4}) {
 		m_pImage[i] = rhs.m_pImage[i];
 	}
-	updateSettings(rhs.rotation, rhs.version);
+    set_rotation(rhs.rotation);
+    set_version(rhs.version);
 }
 
 void EndPipe::Action(size_t id)
 {
 	switch (id) {
 		case 0:
-			{
-				int next[] = { 3, 2, 0, 1};
-				updateSettings(next[rotation], version);
-			}
+            set_rotation(rotation+1);
 		break;
 		case 1:
-			updateSettings(rotation, version+1);
+			set_version(version+1);
 		break;
 		default:
 		break;
@@ -80,40 +80,80 @@ size_t EndPipe::numActions() const
 	return 2;
 }
 
-void EndPipe::updateSettings(size_t rot, size_t v)
+void EndPipe::set_rotation(size_t rot)
 {
-	rot %= 4;
+    bool dirs[] = {
+        getConnector(ReceiveFromDir::Up),
+        getConnector(ReceiveFromDir::Right),
+        getConnector(ReceiveFromDir::Down),
+        getConnector(ReceiveFromDir::Left)
+        };
+	destroyConnectors();
+    rot %= 4;
+    rotation = rot;
+    for (ReceiveFromDir i:{ReceiveFromDir::Up, ReceiveFromDir::Right, ReceiveFromDir::Down, ReceiveFromDir::Left}) {
+        if (!dirs[static_cast<int>(i)]) continue;
+        createConnector(i);
+    }
+}
+
+void EndPipe::createConnector(ReceiveFromDir dir)
+{
+    Machine::createConnector(dir.rotate(rotation));
+}
+
+void EndPipe::destroyConnector(ReceiveFromDir dir)
+{
+    Machine::destroyConnector(dir.rotate(rotation));
+}
+
+optional<Connector&> EndPipe::getConnector(ReceiveFromDir dir)
+{
+    return Machine::getConnector(dir.rotate(rotation));
+}
+
+optional<const Connector&> EndPipe::getConnector(ReceiveFromDir dir) const
+{
+    return Machine::getConnector(dir.rotate(rotation));
+}
+
+void EndPipe::set_version(size_t v)
+{
 	v %= 5;
-	int next[] = { 3, 2, 0, 1};
-	int opposite[] = { 1, 0, 3, 2};
-	int prev[] = { 2, 3, 1, 0};
 	destroyConnectors();
 	switch (v) {
 		case 0:
-			createConnector(static_cast<ReceiveFromDir>(rot));
+			createConnector(ReceiveFromDir::Up);
 		break;
 		case 1:
-			createConnector(static_cast<ReceiveFromDir>(rot));
-			createConnector(static_cast<ReceiveFromDir>(next[rot]));
+			createConnector(ReceiveFromDir::Up);
+			createConnector(ReceiveFromDir::Right);
 		break;
 		case 2:
-			createConnector(static_cast<ReceiveFromDir>(rot));
-			createConnector(static_cast<ReceiveFromDir>(opposite[rot]));
+			createConnector(ReceiveFromDir::Up);
+			createConnector(ReceiveFromDir::Down);
 		break;
 		case 3:
-			createConnector(static_cast<ReceiveFromDir>(rot));
-			createConnector(static_cast<ReceiveFromDir>(opposite[rot]));
-			createConnector(static_cast<ReceiveFromDir>(next[rot]));
+			createConnector(ReceiveFromDir::Up);
+			createConnector(ReceiveFromDir::Down);
+			createConnector(ReceiveFromDir::Right);
 		break;
 		case 4:
-			createConnector(static_cast<ReceiveFromDir>(rot));
-			createConnector(static_cast<ReceiveFromDir>(opposite[rot]));
-			createConnector(static_cast<ReceiveFromDir>(next[rot]));
-			createConnector(static_cast<ReceiveFromDir>(prev[rot]));
+			createConnector(ReceiveFromDir::Up);
+			createConnector(ReceiveFromDir::Down);
+			createConnector(ReceiveFromDir::Right);
+			createConnector(ReceiveFromDir::Left);
 		break;
 	}
-	double angles[] = { 0, 180, -90, 90 };
-	render_dir = angles[rot];
-	rotation = rot;
 	version = v;
+}
+
+size_t EndPipe::get_rotation() const
+{
+    return rotation;
+}
+
+size_t EndPipe::get_version() const
+{
+    return version;
 }
