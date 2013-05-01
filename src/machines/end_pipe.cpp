@@ -5,9 +5,8 @@
 std::array<std::weak_ptr<Gosu::Image>, 5> EndPipe::s_pImage;
 
 EndPipe::EndPipe(Gosu::Graphics& g, int dir, size_t version)
-:Machine(g)
+:RotatableMachine(g, dir)
 ,version(0)
-,rotation(0)
 {
 	for (size_t i = 0; i < s_pImage.size(); i++) {
 		m_pImage[i] = s_pImage[i].lock();
@@ -27,7 +26,6 @@ EndPipe::EndPipe(Gosu::Graphics& g, int dir, size_t version)
 			s_pImage[i] = m_pImage[i];
 		}
 	}
-    set_rotation(dir);
     set_version(version);
 }
 
@@ -52,12 +50,11 @@ void EndPipe::update()
 }
 
 EndPipe::EndPipe(const EndPipe& rhs)
-:Machine(rhs)
+:RotatableMachine(rhs)
 {
 	for (int i:{0, 1, 2, 3, 4}) {
 		m_pImage[i] = rhs.m_pImage[i];
 	}
-    set_rotation(rhs.rotation);
     set_version(rhs.version);
 }
 
@@ -65,7 +62,7 @@ void EndPipe::Action(size_t id)
 {
 	switch (id) {
 		case 0:
-            set_rotation(rotation+1);
+            set_rotation(get_rotation()+1);
 		break;
 		case 1:
 			set_version(version+1);
@@ -78,43 +75,6 @@ void EndPipe::Action(size_t id)
 size_t EndPipe::numActions() const
 {
 	return 2;
-}
-
-void EndPipe::set_rotation(size_t rot)
-{
-    bool dirs[] = {
-        getConnector(ReceiveFromDir::Up),
-        getConnector(ReceiveFromDir::Right),
-        getConnector(ReceiveFromDir::Down),
-        getConnector(ReceiveFromDir::Left)
-        };
-	destroyConnectors();
-    rot %= 4;
-    rotation = rot;
-    for (ReceiveFromDir i:{ReceiveFromDir::Up, ReceiveFromDir::Right, ReceiveFromDir::Down, ReceiveFromDir::Left}) {
-        if (!dirs[static_cast<int>(i)]) continue;
-        createConnector(i);
-    }
-}
-
-void EndPipe::createConnector(ReceiveFromDir dir)
-{
-    Machine::createConnector(dir.rotate(rotation));
-}
-
-void EndPipe::destroyConnector(ReceiveFromDir dir)
-{
-    Machine::destroyConnector(dir.rotate(rotation));
-}
-
-optional<Connector&> EndPipe::getConnector(ReceiveFromDir dir)
-{
-    return Machine::getConnector(dir.rotate(rotation));
-}
-
-optional<const Connector&> EndPipe::getConnector(ReceiveFromDir dir) const
-{
-    return Machine::getConnector(dir.rotate(rotation));
 }
 
 void EndPipe::set_version(size_t v)
@@ -146,11 +106,6 @@ void EndPipe::set_version(size_t v)
 		break;
 	}
 	version = v;
-}
-
-size_t EndPipe::get_rotation() const
-{
-    return rotation;
 }
 
 size_t EndPipe::get_version() const
