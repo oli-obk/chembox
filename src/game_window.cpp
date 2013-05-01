@@ -108,9 +108,9 @@ void GameWindow::draw()
 		wss << L" a cell is not initialized";
 	}
 	font.draw(wss.str(), 0, 0, RenderLayer::GUI);
-	graphics().drawTriangle(input().mouseX(), input().mouseY(), Gosu::Colors::gray,
-							input().mouseX()+10, input().mouseY(), Gosu::Colors::gray,
-							input().mouseX(), input().mouseY()+10, Gosu::Colors::gray, RenderLayer::GUI);
+	graphics().drawTriangle(input().mouseX(), input().mouseY(), Gosu::Color::GRAY,
+							input().mouseX()+10, input().mouseY(), Gosu::Color::GRAY,
+							input().mouseX(), input().mouseY()+10, Gosu::Color::GRAY, RenderLayer::GUI);
 	size_t ix = getMouseXInGrid();
 	size_t iy = getMouseYInGrid();
 	if (ix < grid.width() && iy < grid.height()) {
