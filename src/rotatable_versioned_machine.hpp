@@ -6,10 +6,10 @@
 class RotatableVersionedMachine : public RotatableMachine
 {
     size_t version;
-	static std::array<std::weak_ptr<Gosu::Image>, 5> s_pImage;
+	static std::map<const wchar_t*, std::array<std::weak_ptr<Gosu::Image>, 5>> s_pImage;
 	std::array<std::shared_ptr<Gosu::Image>, 5> m_pImage;
 protected:
-    RotatableVersionedMachine(Gosu::Graphics& g, size_t rot, size_t version, std::wstring basename);
+    RotatableVersionedMachine(Gosu::Graphics& g, size_t rot, size_t version, const wchar_t* basename);
     RotatableVersionedMachine(const RotatableVersionedMachine& rhs);
     virtual ~RotatableVersionedMachine() {}
     virtual void draw();

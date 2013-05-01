@@ -1,29 +1,35 @@
-#include "rotatable_versioned_machine.hpp"
 #include "defines.hpp"
+#include "rotatable_versioned_machine.hpp"
+#include <iostream>
 
-std::array<std::weak_ptr<Gosu::Image>, 5> RotatableVersionedMachine::s_pImage;
+std::map<const wchar_t*, std::array<std::weak_ptr<Gosu::Image>, 5>> RotatableVersionedMachine::s_pImage;
 
-RotatableVersionedMachine::RotatableVersionedMachine(Gosu::Graphics& g, size_t rot, size_t version, std::wstring basename)
+RotatableVersionedMachine::RotatableVersionedMachine(Gosu::Graphics& g, size_t rot, size_t version, const wchar_t* basename)
 :RotatableMachine(g, rot)
 {
-	for (size_t i = 0; i < s_pImage.size(); i++) {
-		m_pImage[i] = s_pImage[i].lock();
+	for (size_t i = 0; i < s_pImage[basename].size(); i++) {
+		m_pImage[i] = s_pImage[basename][i].lock();
 	}
 	if (!m_pImage[0]) {
 		assert(!m_pImage[1]);
 		assert(!m_pImage[2]);
 		assert(!m_pImage[3]);
 		assert(!m_pImage[4]);
-		m_pImage[0].reset(new Gosu::Image(g,basename + L".png", true));
-		m_pImage[1].reset(new Gosu::Image(g,basename + L"2.png", true));
-		m_pImage[2].reset(new Gosu::Image(g,basename + L"2opposite.png", true));
-		m_pImage[3].reset(new Gosu::Image(g,basename + L"3.png", true));
-		m_pImage[4].reset(new Gosu::Image(g,basename + L"4.png", true));
+		m_pImage[0].reset(new Gosu::Image(g,std::wstring(basename) + L".png", true));
+		m_pImage[1].reset(new Gosu::Image(g,std::wstring(basename) + L"2.png", true));
+		m_pImage[2].reset(new Gosu::Image(g,std::wstring(basename) + L"2opposite.png", true));
+		m_pImage[3].reset(new Gosu::Image(g,std::wstring(basename) + L"3.png", true));
+		m_pImage[4].reset(new Gosu::Image(g,std::wstring(basename) + L"4.png", true));
 
-		for (size_t i = 0; i < s_pImage.size(); i++) {
-			s_pImage[i] = m_pImage[i];
+		for (size_t i = 0; i < s_pImage[basename].size(); i++) {
+			s_pImage[basename][i] = m_pImage[i];
 		}
 	}
+    assert(m_pImage[0]);
+    assert(m_pImage[1]);
+    assert(m_pImage[2]);
+    assert(m_pImage[3]);
+    assert(m_pImage[4]);
     set_version(version);
 }
 
