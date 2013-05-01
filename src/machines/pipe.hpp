@@ -10,6 +10,7 @@ private:
 	Pipe(const Pipe& rhs);
 	std::shared_ptr<Gosu::Font> m_pFont;
 	static std::weak_ptr<Gosu::Font> s_pFont;
+    static std::mt19937 engine; // Mersenne twister MT19937
 public:
 	ParticleMap particles;
 	Pipe(Gosu::Graphics& g, int dir, size_t version = 0);

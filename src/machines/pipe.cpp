@@ -23,6 +23,7 @@ void Pipe::Action(size_t id)
 }
 
 std::weak_ptr<Gosu::Font> Pipe::s_pFont;
+std::mt19937 Pipe::engine;
 
 Pipe::Pipe(Gosu::Graphics& g, int dir, size_t version)
 :RotatableVersionedMachine(g, dir, version, L"pipe")
@@ -67,12 +68,15 @@ void Pipe::send()
     // prepare sending buffer
     auto distr = particles.split(connections);
     particles.clear();
+
+    size_t v[] = {0, 1, 2, 3};
+    std::shuffle(std::begin(v), std::end(v), engine);
     // send stuff from buffer
     size_t i = 0;
 	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
         auto con = getConnector(dir);
         if (!con) continue;
-		con->push(distr[i++]);
+		con->push(distr[v[i++]]);
 	}
 	particle_engine.update();
 }
