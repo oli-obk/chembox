@@ -1,0 +1,77 @@
+#include "pipe.hpp"
+#include <sstream>
+#include <Gosu/Font.hpp>
+#include <Gosu/Text.hpp>
+#include "defines.hpp"
+
+Pipe::~Pipe()
+{
+}
+
+void Pipe::Action(size_t id)
+{
+	switch (id) {
+		case 0:
+            set_rotation(get_rotation()+1);
+		break;
+		case 1:
+			set_version(get_version()+1);
+		break;
+		default:
+		break;
+	}
+}
+
+std::weak_ptr<Gosu::Font> Pipe::s_pFont;
+
+Pipe::Pipe(Gosu::Graphics& g, int dir, size_t version)
+:RotatableVersionedMachine(g, dir, version, L"pipe")
+,m_pFont(s_pFont.lock())
+{
+    if (!m_pFont) {
+		m_pFont.reset(new Gosu::Font(g, Gosu::defaultFontName(), 10));
+		s_pFont = m_pFont;
+    }
+}
+
+Pipe::Pipe(const Pipe& rhs)
+:RotatableVersionedMachine(rhs)
+,m_pFont(rhs.m_pFont)
+,particles(particles)
+{
+}
+
+size_t Pipe::numActions() const
+{
+    return 2;
+}
+
+void Pipe::update()
+{
+    size_t connections = 0;
+	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
+        auto con = getConnector(dir);
+        if (!con) continue;
+        connections++;
+		particles += con->pop();
+	}
+	ParticleMap distribution = particles / connections;
+	particles -= distribution*connections;
+	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
+        auto con = getConnector(dir);
+        if (!con) continue;
+		con->push(distribution);
+	}
+	particle_engine.update();
+}
+
+void Pipe::draw()
+{
+    RotatableVersionedMachine::draw();
+	size_t count = particles.count(ParticleState::Gas, ParticleType::Hydrogen);
+	if (count != 0) {
+		std::wstringstream wss;
+		wss << count;
+		m_pFont->drawRel(wss.str(), 0.5, 0.5, RenderLayer::Machines+1, 0.5, 0.4, 0.05, 0.05, Gosu::Color::RED);
+	}
+}

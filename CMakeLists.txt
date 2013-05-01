@@ -20,8 +20,8 @@ SET(SRC_FILES
 	src/ConnectorDir.cpp
 	src/ConnectorDir.hpp
 
-	src/machines/fourway_pipe.cpp
-	src/machines/fourway_pipe.hpp
+	src/machines/pipe.cpp
+	src/machines/pipe.hpp
 	src/machines/end_pipe.cpp
 	src/machines/end_pipe.hpp
 	)

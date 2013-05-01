@@ -9,9 +9,9 @@
 #include <Gosu/Graphics.hpp>
 #include <Gosu/ImageData.hpp>
 #include <Gosu/Inspection.hpp>
-#include "machines/fourway_pipe.hpp"
 #include "defines.hpp"
 #include "machines/end_pipe.hpp"
+#include "machines/pipe.hpp"
 
 GameWindow::GameWindow()
 :Gosu::Window(1200, 800, false)
@@ -23,16 +23,16 @@ GameWindow::GameWindow()
 		grid.reset(0, y, new EndPipe(graphics(), static_cast<int>(ReceiveFromDir::Right)));
 		grid.reset(grid.width()-1, y, new EndPipe(graphics(), static_cast<int>(ReceiveFromDir::Left)));
 		for (size_t x = 1; x < grid.width() - 1; x++) {
-			grid.reset(x, y, new FourwayPipe(graphics()));
+			grid.reset(x, y, new Pipe(graphics(), 0, 4));
 		}
 	}
 	for (size_t x = 1; x < grid.height() - 1; x++) {
 		grid.reset(x, 0, new EndPipe(graphics(), static_cast<int>(ReceiveFromDir::Down)));
 		grid.reset(x, grid.height()-1, new EndPipe(graphics(), static_cast<int>(ReceiveFromDir::Up)));
 	}
-	static_cast<FourwayPipe&>(grid.at(1,1)).particles.add(ParticleState::Gas, ParticleType::Hydrogen, 30);
+	static_cast<Pipe&>(grid.at(1,1)).particles.add(ParticleState::Gas, ParticleType::Hydrogen, 30);
 
-	Toolbox.reset(0, 0, new FourwayPipe(graphics()));
+	Toolbox.reset(0, 0, new Pipe(graphics(), 0, 4));
 	Toolbox.reset(1, 0, new EndPipe(graphics(), static_cast<int>(ReceiveFromDir::Down)));
 }
 
