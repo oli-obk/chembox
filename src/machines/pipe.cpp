@@ -46,7 +46,17 @@ size_t Pipe::numActions() const
     return 2;
 }
 
-void Pipe::update()
+void Pipe::receive()
+{
+    // receive incoming
+	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
+        auto con = getConnector(dir);
+        if (!con) continue;
+		particles += con->pop();
+	}
+}
+
+void Pipe::send()
 {
     // count connections
     size_t connections = 0;
@@ -57,13 +67,6 @@ void Pipe::update()
     // prepare sending buffer
     auto distr = particles.split(connections);
     particles.clear();
-    // receive incoming
-	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
-        auto con = getConnector(dir);
-        if (!con) continue;
-        connections++;
-		particles += con->pop();
-	}
     // send stuff from buffer
     size_t i = 0;
 	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {

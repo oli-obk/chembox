@@ -17,7 +17,7 @@ private:
     enum class ConnectorState{
         ReadyToPop, ReadyToPush, Pushing
     };
-	builtin_wrapper<ConnectorState, ConnectorState::ReadyToPop> __state;
+	builtin_wrapper<ConnectorState, ConnectorState::ReadyToPush> __state;
 #endif //NDEBUG
 	Connector(const Connector&) = delete;
 	Connector& operator=(const Connector&) = delete;
@@ -117,7 +117,8 @@ public:
 	void Destroy() { assert(!m_destroyed); m_destroyed = true; }
 	bool isDestroyed() const { return m_destroyed; }
 	virtual void draw() = 0;
-	virtual void update() = 0;
+	virtual void send() = 0;
+	virtual void receive() = 0;
 	virtual std::unique_ptr<Machine> clone() = 0;
 	virtual void Action(size_t /* action_id */) {};
 	virtual size_t numActions() const { return 0; }

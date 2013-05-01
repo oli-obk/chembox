@@ -16,7 +16,8 @@ public:
 	virtual ~Pipe();
 
 public:
-	virtual void update();
+	virtual void send();
+	virtual void receive();
     virtual void draw();
 	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<Pipe>(new Pipe(*this)); }
 	size_t numActions() const;

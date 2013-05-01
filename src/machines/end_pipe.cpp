@@ -10,13 +10,22 @@ EndPipe::~EndPipe()
 {
 }
 
-void EndPipe::update()
+void EndPipe::send()
 {
 	for (auto dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
 		auto con = getConnector(dir);
 		if (!con) continue;
-		auto parts = con->pop();
-		con->push(parts);
+		con->push(particles[static_cast<size_t>(dir)]);
+        particles[static_cast<size_t>(dir)].clear();
+	}
+}
+
+void EndPipe::receive()
+{
+	for (auto dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
+		auto con = getConnector(dir);
+		if (!con) continue;
+		particles[static_cast<size_t>(dir)] = con->pop();
 	}
 }
 
