@@ -27,6 +27,17 @@ public:
 	{
 		return val -= rhs;
 	}
+    T& operator++()
+    {
+        val++;
+        return *this;
+    }
+    T operator++ (int)
+    {
+        T v = val;
+        val++;
+        return v;
+    }
 };
 
 template<typename T>
