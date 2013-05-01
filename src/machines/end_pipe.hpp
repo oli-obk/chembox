@@ -6,23 +6,17 @@
 #include "Particle.hpp"
 #include <Gosu/Graphics.hpp>
 #include "particle_engine.hpp"
-#include "rotatable_machine.hpp"
+#include "rotatable_versioned_machine.hpp"
 
-class EndPipe : public RotatableMachine
+class EndPipe : public RotatableVersionedMachine
 {
 private:
-	static std::array<std::weak_ptr<Gosu::Image>, 5> s_pImage;
-	std::array<std::shared_ptr<Gosu::Image>, 5> m_pImage;
-	size_t version;
 	EndPipe(const EndPipe& rhs);
-    void set_version(size_t version);
-    size_t get_version() const;
 public:
 	EndPipe(Gosu::Graphics& g, int dir, size_t version = 0);
 	virtual ~EndPipe();
 
 public:
-	virtual void draw();
 	virtual void update();
 	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<EndPipe>(new EndPipe(*this)); }
 	size_t numActions() const;

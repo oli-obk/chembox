@@ -13,6 +13,8 @@ SET(SRC_FILES
 	src/machine.cpp
 	src/rotatable_machine.hpp
 	src/rotatable_machine.cpp
+    src/rotatable_versioned_machine.hpp
+    src/rotatable_versioned_machine.cpp
 	src/particle_engine.cpp
 	src/particle_engine.hpp
 	src/ConnectorDir.cpp
