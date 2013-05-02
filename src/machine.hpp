@@ -107,12 +107,12 @@ protected:
 	Machine(const Machine& rhs);
 	ParticleEngine particle_engine;
 	void createConnector(ReceiveFromDir dir);
-	optional<Connector&> getConnector(ReceiveFromDir dir);
-	optional<const Connector&> getConnector(ReceiveFromDir dir) const;
 	void destroyConnector(ReceiveFromDir dir);
 	void destroyConnectors();
 public:
-	void Initialize(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right);
+	optional<Connector&> getConnector(ReceiveFromDir dir);
+	optional<const Connector&> getConnector(ReceiveFromDir dir) const;
+	virtual void Initialize(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right);
 	bool isInitialized() const { return m_initialized; }
 	void Destroy() { assert(!m_destroyed); m_destroyed = true; }
 	bool isDestroyed() const { return m_destroyed; }
