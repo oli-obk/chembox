@@ -23,6 +23,8 @@ public:
 	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<Pipe>(new Pipe(*this)); }
 	size_t numActions() const;
 	void Action(size_t id);
+    char serialize();
+    static constexpr const char* deserializes() { return R"(L7/\-|+><v^)"; }
 };
 
 #endif // PIPE_HPP

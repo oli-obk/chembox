@@ -23,6 +23,9 @@ public:
 	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<EndPipe>(new EndPipe(*this)); }
 	size_t numActions() const;
 	void Action(size_t id);
+
+    char serialize() { return 'X'; }
+    static constexpr const char* deserializes() { return "X"; }
 };
 
 #endif // END_PIPE_HPP

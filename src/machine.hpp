@@ -123,6 +123,9 @@ public:
 	virtual void Action(size_t /* action_id */) {};
 	virtual size_t numActions() const { return 0; }
 	virtual std::string nameAction(size_t /* action_id */) const { return ""; };
+    // char this object currently represents
+    virtual char serialize() = 0;
+    static constexpr const char* deserializes();
 
 	void communicate();
 	void insert(ParticleState, ParticleType, int count);

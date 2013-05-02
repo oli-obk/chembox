@@ -91,3 +91,50 @@ void Pipe::draw()
 		m_pFont->drawRel(wss.str(), 0.5, 0.5, RenderLayer::Machines+1, 0.5, 0.4, 0.05, 0.05, Gosu::Color::RED);
 	}
 }
+
+char Pipe::serialize()
+{
+    switch (get_version()) {
+        case 0:
+            return 'X'; // this is more of an end pipe tbh
+        case 1:
+            switch (get_rotation()) {
+                case ReceiveFromDir::Up:
+                    return 'L';
+                break;
+                case ReceiveFromDir::Right:
+                    return '/';
+                break;
+                case ReceiveFromDir::Down:
+                    return '7';
+                break;
+                case ReceiveFromDir::Left:
+                    return '\\';
+                break;
+            }
+        case 2:
+            if (get_rotation() == ReceiveFromDir::Up || get_rotation() == ReceiveFromDir::Down) {
+                return '|';
+            } else {
+                return '-';
+            }
+        case 3:
+            switch (get_rotation()) {
+                case ReceiveFromDir::Up:
+                    return '>';
+                break;
+                case ReceiveFromDir::Right:
+                    return 'v';
+                break;
+                case ReceiveFromDir::Down:
+                    return '<';
+                break;
+                case ReceiveFromDir::Left:
+                    return '^';
+                break;
+            }
+        case 4:
+            return '+';
+    }
+    return 0;
+}
