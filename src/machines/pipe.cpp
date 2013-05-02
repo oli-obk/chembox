@@ -70,7 +70,7 @@ void Pipe::send()
     particles.clear();
 
     size_t v[] = {0, 1, 2, 3};
-    std::shuffle(std::begin(v), std::end(v), engine);
+    std::shuffle(std::begin(v), v+connections, engine);
     // send stuff from buffer
     size_t i = 0;
 	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
