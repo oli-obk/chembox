@@ -13,7 +13,7 @@ private:
     static std::mt19937 engine; // Mersenne twister MT19937
 public:
 	ParticleMap particles;
-	Pipe(Gosu::Graphics& g, int dir, size_t version = 0);
+	Pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version = 0);
 	virtual ~Pipe();
 
 public:

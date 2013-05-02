@@ -5,13 +5,13 @@
 
 class RotatableMachine : public Machine
 {
-    size_t rotation;
+    ReceiveFromDir rotation;
 protected:
-    RotatableMachine(Gosu::Graphics& g, int dir);
+    RotatableMachine(Gosu::Graphics& g, ReceiveFromDir dir);
     RotatableMachine(const RotatableMachine& rhs);
 public:
-    void set_rotation(size_t rot);
-    size_t get_rotation() const;
+    void set_rotation(ReceiveFromDir rot);
+    ReceiveFromDir get_rotation() const;
 	virtual optional<Connector&> getConnector(ReceiveFromDir dir);
 	virtual optional<const Connector&> getConnector(ReceiveFromDir dir) const;
 	virtual void createConnector(ReceiveFromDir dir);

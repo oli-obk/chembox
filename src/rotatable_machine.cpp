@@ -1,9 +1,9 @@
 #include "rotatable_machine.hpp"
 
-RotatableMachine::RotatableMachine(Gosu::Graphics& g, int dir)
+RotatableMachine::RotatableMachine(Gosu::Graphics& g, ReceiveFromDir dir)
 :Machine(g)
+,rotation(ReceiveFromDir::Up)
 {
-    rotation = 0;
     set_rotation(dir);
 }
 
@@ -13,15 +13,15 @@ RotatableMachine::~RotatableMachine()
 
 void RotatableMachine::createConnector(ReceiveFromDir dir)
 {
-    Machine::createConnector(dir.rotate(rotation));
+    Machine::createConnector(dir + rotation);
 }
 
 void RotatableMachine::destroyConnector(ReceiveFromDir dir)
 {
-    Machine::destroyConnector(dir.rotate(rotation));
+    Machine::destroyConnector(dir + rotation);
 }
 
-void RotatableMachine::set_rotation(size_t rot)
+void RotatableMachine::set_rotation(ReceiveFromDir rot)
 {
     bool dirs[] = {
         getConnector(ReceiveFromDir::Up),
@@ -30,7 +30,6 @@ void RotatableMachine::set_rotation(size_t rot)
         getConnector(ReceiveFromDir::Left)
         };
 	destroyConnectors();
-    rot %= 4;
     rotation = rot;
     for (ReceiveFromDir i:{ReceiveFromDir::Up, ReceiveFromDir::Right, ReceiveFromDir::Down, ReceiveFromDir::Left}) {
         if (!dirs[static_cast<int>(i)]) continue;
@@ -40,21 +39,21 @@ void RotatableMachine::set_rotation(size_t rot)
 
 optional<Connector&> RotatableMachine::getConnector(ReceiveFromDir dir)
 {
-    return Machine::getConnector(dir.rotate(rotation));
+    return Machine::getConnector(dir + rotation);
 }
 
 optional<const Connector&> RotatableMachine::getConnector(ReceiveFromDir dir) const
 {
-    return Machine::getConnector(dir.rotate(rotation));
+    return Machine::getConnector(dir + rotation);
 }
 
 RotatableMachine::RotatableMachine(const RotatableMachine& rhs)
 :Machine(rhs)
+,rotation(rhs.rotation)
 {
-    set_rotation(rhs.rotation);
 }
 
-size_t RotatableMachine::get_rotation() const
+ReceiveFromDir RotatableMachine::get_rotation() const
 {
     return rotation;
 }

@@ -14,7 +14,7 @@ private:
 	EndPipe(const EndPipe& rhs);
     std::array<ParticleMap, 4> particles;
 public:
-	EndPipe(Gosu::Graphics& g, int dir, size_t version = 0);
+	EndPipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version = 0);
 	virtual ~EndPipe();
 
 public:

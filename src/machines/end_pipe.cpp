@@ -1,7 +1,7 @@
 #include "end_pipe.hpp"
 #include "defines.hpp"
 
-EndPipe::EndPipe(Gosu::Graphics& g, int dir, size_t version)
+EndPipe::EndPipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
 :RotatableVersionedMachine(g, dir, version, L"end_pipe")
 {
 }

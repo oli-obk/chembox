@@ -3,32 +3,25 @@
 
 #include <cstdint>
 #include <cassert>
-class ReceiveFromDir
+
+enum class ReceiveFromDir : uint8_t
 {
-private:
-    uint8_t val;
-public:
-	static const ReceiveFromDir Up;
-    static const ReceiveFromDir Right;
-    static const ReceiveFromDir Down;
-    static const ReceiveFromDir Left;
-    explicit ReceiveFromDir(int v):val(v)
-    {
-        assert(v >=0);
-        assert(v < 4);
-    }
-    ReceiveFromDir rotate(int steps) const
-    {
-        return ReceiveFromDir(((val+steps)%4+4)%4);
-    }
-    ReceiveFromDir flip() const
-    {
-        return rotate(2);
-    }
-    explicit operator int() const
-    {
-        return val;
-    }
+    Up, Right, Down, Left
 };
+
+inline ReceiveFromDir operator+(ReceiveFromDir lhs, int rhs)
+{
+    return static_cast<ReceiveFromDir>(((static_cast<int>(lhs)+rhs)%4+4)%4);
+}
+
+inline ReceiveFromDir operator+(ReceiveFromDir lhs, ReceiveFromDir rhs)
+{
+    return static_cast<ReceiveFromDir>(((static_cast<int>(lhs)+static_cast<int>(rhs)))%4);
+}
+
+inline ReceiveFromDir flip(ReceiveFromDir dir)
+{
+    return dir + 2;
+}
 
 #endif //CHEMBOX_CONNECTOR_DIR

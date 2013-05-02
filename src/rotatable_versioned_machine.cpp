@@ -4,7 +4,7 @@
 
 std::map<const wchar_t*, std::array<std::weak_ptr<Gosu::Image>, 5>> RotatableVersionedMachine::s_pImage;
 
-RotatableVersionedMachine::RotatableVersionedMachine(Gosu::Graphics& g, size_t rot, size_t version, const wchar_t* basename)
+RotatableVersionedMachine::RotatableVersionedMachine(Gosu::Graphics& g, ReceiveFromDir rot, size_t version, const wchar_t* basename)
 :RotatableMachine(g, rot)
 {
 	for (size_t i = 0; i < s_pImage[basename].size(); i++) {
@@ -81,5 +81,5 @@ RotatableVersionedMachine::RotatableVersionedMachine(const RotatableVersionedMac
 void RotatableVersionedMachine::draw()
 {
 	double angles[] = { 0, 90, 180, -90 };
-	m_pImage[get_version()]->drawRot(0.5, 0.5, RenderLayer::Machines, angles[get_rotation()], 0.5, 0.5, 1.0/double(m_pImage[get_version()]->width()), 1.0/double(m_pImage[get_version()]->height()));
+	m_pImage[get_version()]->drawRot(0.5, 0.5, RenderLayer::Machines, angles[static_cast<int>(get_rotation())], 0.5, 0.5, 1.0/double(m_pImage[get_version()]->width()), 1.0/double(m_pImage[get_version()]->height()));
 }

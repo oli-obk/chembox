@@ -12,7 +12,7 @@ void Pipe::Action(size_t id)
 {
 	switch (id) {
 		case 0:
-            set_rotation(get_rotation()+1);
+            set_rotation(get_rotation() + 1);
 		break;
 		case 1:
 			set_version(get_version()+1);
@@ -25,7 +25,7 @@ void Pipe::Action(size_t id)
 std::weak_ptr<Gosu::Font> Pipe::s_pFont;
 std::mt19937 Pipe::engine;
 
-Pipe::Pipe(Gosu::Graphics& g, int dir, size_t version)
+Pipe::Pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
 :RotatableVersionedMachine(g, dir, version, L"pipe")
 ,m_pFont(s_pFont.lock())
 {

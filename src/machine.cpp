@@ -48,7 +48,7 @@ void Machine::Initialize(optional<Machine&> up, optional<Machine&> down, optiona
 			// there is nothing here to connect to
 			return;
 		}
-		auto& con = machines[d]->connectors[static_cast<int>(dir.flip())];
+		auto& con = machines[d]->connectors[static_cast<int>(flip(dir))];
 		if (!con) {
 			// there is a cell but no connector
 			return;

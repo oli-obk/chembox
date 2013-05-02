@@ -17,8 +17,6 @@ SET(SRC_FILES
     src/rotatable_versioned_machine.cpp
 	src/particle_engine.cpp
 	src/particle_engine.hpp
-	src/ConnectorDir.cpp
-	src/ConnectorDir.hpp
 
 	src/machines/pipe.cpp
 	src/machines/pipe.hpp
@@ -30,6 +28,7 @@ SET(SRC_FILES
 SET(INC_FILES
     src/game_window.hpp
 	include/optional.hpp
+	src/ConnectorDir.hpp
 	)
 INCLUDE_DIRECTORIES(include src)
 
