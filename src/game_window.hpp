@@ -30,6 +30,7 @@ protected:
 	Grid grid;
 	Grid Toolbox;
 	std::unique_ptr<Machine> dragdrop;
+    unsigned long update_time;
 public:
 	int getMouseXInGrid() const;
 	int getMouseYInGrid() const;

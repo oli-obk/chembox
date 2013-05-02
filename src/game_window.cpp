@@ -12,11 +12,12 @@
 #include "defines.hpp"
 #include "machines/end_pipe.hpp"
 #include "machines/pipe.hpp"
+#include <Gosu/Timing.hpp>
 
 GameWindow::GameWindow()
 :Gosu::Window(1200, 800, false)
 ,font(graphics(), Gosu::defaultFontName(), 20)
-,grid(graphics(), 8, 8)
+,grid(graphics(), 16, 16)
 ,Toolbox(graphics(), 2, 1)
 {
 	for (size_t y = 1; y < grid.height() - 1; y++) {
@@ -101,7 +102,11 @@ void GameWindow::draw()
 {
 	std::wstringstream wss;
 	wss << Gosu::fps();
-	wss << L" - ";
+	wss << L"fps - ";
+    wss << update_time;
+	wss << L"ms / ";
+    wss << 1000/60;
+    wss << L"ms - ";
 	if (grid.is_initialized()) {
 		wss << L" grid ready";
 	} else {
@@ -179,9 +184,11 @@ void GameWindow::releaseMemory()
 
 void GameWindow::update()
 {
+    auto start_time = Gosu::milliseconds();
 	if (input().down(Gosu::kbSpace)) {
 		step();
 	}
+    update_time = Gosu::milliseconds() - start_time;
 }
 
 void GameWindow::step()
