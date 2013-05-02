@@ -34,6 +34,11 @@ EndPipe::EndPipe(const EndPipe& rhs)
 {
 }
 
+EndPipe::EndPipe(char, Gosu::Graphics& g)
+:EndPipe(g, ReceiveFromDir::Up, 0)
+{
+}
+
 void EndPipe::Action(size_t id)
 {
 	switch (id) {

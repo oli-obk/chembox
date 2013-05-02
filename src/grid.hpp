@@ -44,12 +44,18 @@ public:
 		return (_initialized = true);
 	}
 	Grid(Gosu::Graphics& g, size_t wdt, size_t hgt)
-	:m_data(wdt*hgt),
-	wdt(wdt),
-	hgt(hgt),
-	graphics(g),
-	_initialized(true)
-	{}
+	:graphics(g)
+	{
+        resize(wdt, hgt);
+    }
+    void resize(size_t w, size_t h)
+    {
+        m_data.clear();
+        m_data.resize(w*h);
+        wdt = w;
+        hgt = h;
+        _initialized = true;
+    }
 	size_t width() const { return wdt; }
 	size_t height() const { return hgt; }
 	//T& operator[](size_t x, size_t y) { return m_data[x+y<<sidepow]; }

@@ -14,6 +14,7 @@ private:
 public:
 	ParticleMap particles;
 	Pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version = 0);
+    Pipe(char c, Gosu::Graphics& g);
 	virtual ~Pipe();
 
 public:
@@ -24,7 +25,7 @@ public:
 	size_t numActions() const;
 	void Action(size_t id);
     char serialize();
-    static constexpr const char* deserializes() { return R"(L7/\-|+><v^)"; }
+    static const std::string deserializes() { return R"(L7/\-|+><v^)"; }
 };
 
 #endif // PIPE_HPP

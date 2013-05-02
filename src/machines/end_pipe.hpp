@@ -15,6 +15,7 @@ private:
     std::array<ParticleMap, 4> particles;
 public:
 	EndPipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version = 0);
+	EndPipe(char c, Gosu::Graphics& g);
 	virtual ~EndPipe();
 
 public:
@@ -25,7 +26,7 @@ public:
 	void Action(size_t id);
 
     char serialize() { return 'X'; }
-    static constexpr const char* deserializes() { return "X"; }
+    static const std::string deserializes() { return "X"; }
 };
 
 #endif // END_PIPE_HPP

@@ -37,6 +37,7 @@ public:
 	int getMouseXInToolbox() const;
 	int getMouseYInToolbox() const;
 	void step();
+    void load(std::string filename);
     GameWindow();
     virtual ~GameWindow();
     virtual void buttonDown(Gosu::Button);

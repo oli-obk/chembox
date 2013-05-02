@@ -138,3 +138,54 @@ char Pipe::serialize()
     }
     return 0;
 }
+
+ReceiveFromDir get_serialization_rotation(char c)
+{
+    switch (c) {
+        case '+':
+        case '|':
+        case '>':
+        case 'L':
+            return ReceiveFromDir::Up;
+        case '-':
+        case 'v':
+        case '/':
+            return ReceiveFromDir::Right;
+        case '<':
+        case '7':
+            return ReceiveFromDir::Down;
+        case '^':
+        case '\\':
+            return ReceiveFromDir::Left;
+        default:
+        throw std::runtime_error("Pipe got an invalid char to deserialize rotation from");
+    }
+}
+
+size_t get_serialization_version(char c)
+{
+    switch (c) {
+        case 'L':
+        case '/':
+        case '\\':
+        case '7':
+            return 1;
+        case '|':
+        case '-':
+            return 2;
+        case '<':
+        case 'v':
+        case '^':
+        case '>':
+            return 3;
+        case '+':
+            return 4;
+        default:
+        throw std::runtime_error("Pipe got an invalid char to deserialize version from");
+    }
+}
+
+Pipe::Pipe(char c, Gosu::Graphics& g)
+:Pipe(g, get_serialization_rotation(c), get_serialization_version(c))
+{
+}

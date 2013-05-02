@@ -13,6 +13,8 @@
 #include "machines/end_pipe.hpp"
 #include "machines/pipe.hpp"
 #include <Gosu/Timing.hpp>
+#include <fstream>
+#include "machine_factory.hpp"
 
 GameWindow::GameWindow()
 :Gosu::Window(1200, 800, false)
@@ -20,18 +22,9 @@ GameWindow::GameWindow()
 ,grid(graphics(), 16, 16)
 ,Toolbox(graphics(), 2, 1)
 {
-	for (size_t y = 1; y < grid.height() - 1; y++) {
-		grid.reset(0, y, new EndPipe(graphics(), ReceiveFromDir::Right));
-		grid.reset(grid.width()-1, y, new EndPipe(graphics(), ReceiveFromDir::Left));
-		for (size_t x = 1; x < grid.width() - 1; x++) {
-			grid.reset(x, y, new Pipe(graphics(), ReceiveFromDir::Up, 4));
-		}
-	}
-	for (size_t x = 1; x < grid.height() - 1; x++) {
-		grid.reset(x, 0, new EndPipe(graphics(), ReceiveFromDir::Down));
-		grid.reset(x, grid.height()-1, new EndPipe(graphics(), ReceiveFromDir::Up));
-	}
-	static_cast<Pipe&>(grid.at(1,1)).particles.add(ParticleState::Gas, ParticleType::Hydrogen, 30);
+	load("autosave.grid");
+	static_cast<Pipe&>(grid.at(4,4)).particles.add(ParticleState::Gas, ParticleType::Hydrogen, 15);
+	static_cast<Pipe&>(grid.at(4,5)).particles.add(ParticleState::Gas, ParticleType::Hydrogen, 15);
 
 	Toolbox.reset(0, 0, new Pipe(graphics(), ReceiveFromDir::Up, 4));
 	Toolbox.reset(1, 0, new EndPipe(graphics(), ReceiveFromDir::Down));
@@ -95,7 +88,20 @@ void GameWindow::buttonUp(Gosu::Button btn)
         if (dragdrop) {
             dragdrop.reset();
         }
-	}
+	} else if (btn == Gosu::kbF6) {
+        std::ofstream file("autosave.grid");
+        for (size_t y = 0; y < grid.height(); y++) {
+            for (size_t x = 0; x < grid.width(); x++) {
+                auto e = grid.get(x, y);
+                if (!e) {
+                    file << ' ';
+                    continue;
+                }
+                file << e->serialize();
+            }
+            file << std::endl;
+        }
+    }
 }
 
 void GameWindow::draw()
@@ -216,4 +222,46 @@ int GameWindow::getMouseXInToolbox() const
 int GameWindow::getMouseYInToolbox() const
 {
 	return std::floor((input().mouseY()-toolboxy)/toolboxhgt*double(Toolbox.height()));
+}
+
+void GameWindow::load(std::string filename)
+{
+    std::cout << "loading " << filename << std::endl;
+    std::ifstream file(filename);
+    std::vector<std::string> data;
+    size_t wdt = 0;
+    while(file) {
+        std::string str;
+        std::getline(file, str);
+        if (wdt == 0) {
+            if (str.empty()) {
+                // skip beginning empty lines
+                continue;
+            }
+            wdt = str.length();
+        }
+        if (str.length() == 0) {
+            std::cout << "found empty line, stopped parsing" << std::endl;
+            break;
+        }
+        if (wdt != str.length()) {
+            std::cout << "line length do not match, expected " << wdt << " and got " << str.length() << " in line \"" << str << "\"" << std::endl;
+        }
+        std::cout << str << std::endl;
+        data.push_back(str);
+    }
+    std::cout << "found grid of size " << wdt << "x" << data.size() << std::endl;
+    MachineFactory factory;
+    factory.add<Pipe>(graphics());
+    factory.add<EndPipe>(graphics());
+    grid.resize(wdt, data.size());
+    for (size_t y = 0; y < data.size(); y++) {
+        for (size_t x = 0; x < wdt; x++) {
+            char c = data.at(y).at(x);
+            if (c == ' ') {
+                continue;
+            }
+            grid.reset(x, y, factory.create(c));
+        }
+    }
 }
