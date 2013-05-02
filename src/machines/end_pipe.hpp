@@ -23,8 +23,6 @@ public:
 	virtual void send();
 	virtual void receive();
 	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<EndPipe>(new EndPipe(*this)); }
-	size_t numActions() const;
-	void Action(size_t id);
 
     char serialize() { return 'X'; }
     static const std::string deserializes() { return "X"; }

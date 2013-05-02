@@ -39,25 +39,6 @@ EndPipe::EndPipe(char, Gosu::Graphics& g)
 {
 }
 
-void EndPipe::Action(size_t id)
-{
-	switch (id) {
-		case 0:
-            set_rotation(get_rotation()+1);
-		break;
-		case 1:
-			set_version(get_version()+1);
-		break;
-		default:
-		break;
-	}
-}
-
-size_t EndPipe::numActions() const
-{
-	return 2;
-}
-
 void EndPipe::Initialize(optional<Machine&> up_, optional<Machine&> down_, optional<Machine&> left_, optional<Machine&> right_)
 {
     int count = 0;
