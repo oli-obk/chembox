@@ -15,17 +15,19 @@
 #include <Gosu/Timing.hpp>
 #include <fstream>
 #include "machine_factory.hpp"
+#include "machines/pump.hpp"
 
 GameWindow::GameWindow()
 :Gosu::Window(1200, 800, false)
 ,font(graphics(), Gosu::defaultFontName(), 20)
 ,grid(graphics(), 16, 16)
-,Toolbox(graphics(), 2, 1)
+,Toolbox(graphics(), 2, 2)
 {
 	load("autosave.grid");
 
 	Toolbox.reset(0, 0, new Pipe(graphics(), ReceiveFromDir::Up, 4));
 	Toolbox.reset(1, 0, new EndPipe(graphics(), ReceiveFromDir::Down));
+	Toolbox.reset(0, 1, new Pump(graphics()));
 }
 
 GameWindow::~GameWindow()
@@ -252,6 +254,7 @@ void GameWindow::load(std::string filename)
     MachineFactory factory;
     factory.add<Pipe>(graphics());
     factory.add<EndPipe>(graphics());
+    factory.add<Pump>(graphics());
     grid.resize(wdt, data.size());
     for (size_t y = 0; y < data.size(); y++) {
         for (size_t x = 0; x < wdt; x++) {
