@@ -23,8 +23,6 @@ GameWindow::GameWindow()
 ,Toolbox(graphics(), 2, 1)
 {
 	load("autosave.grid");
-	static_cast<Pipe&>(grid.at(4,4)).particles.add(ParticleState::Gas, ParticleType::Hydrogen, 15);
-	static_cast<Pipe&>(grid.at(4,5)).particles.add(ParticleState::Gas, ParticleType::Hydrogen, 15);
 
 	Toolbox.reset(0, 0, new Pipe(graphics(), ReceiveFromDir::Up, 4));
 	Toolbox.reset(1, 0, new EndPipe(graphics(), ReceiveFromDir::Down));

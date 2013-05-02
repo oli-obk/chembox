@@ -17,6 +17,9 @@ void Pipe::Action(size_t id)
 		case 1:
 			set_version(get_version()+1);
 		break;
+        case 2:
+            particles.add(ParticleState::Gas, ParticleType::Hydrogen, 10);
+        break;
 		default:
 		break;
 	}
@@ -44,7 +47,7 @@ Pipe::Pipe(const Pipe& rhs)
 
 size_t Pipe::numActions() const
 {
-    return 2;
+    return 3;
 }
 
 void Pipe::receive()
