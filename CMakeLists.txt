@@ -33,6 +33,7 @@ SET(INC_FILES
     src/game_window.hpp
 	include/optional.hpp
 	src/ConnectorDir.hpp
+    src/ParticleEmitter.hpp
 	)
 INCLUDE_DIRECTORIES(include src)
 

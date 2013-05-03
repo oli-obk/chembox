@@ -22,6 +22,7 @@ GameWindow::GameWindow()
 ,font(graphics(), Gosu::defaultFontName(), 20)
 ,grid(graphics(), 16, 16)
 ,Toolbox(graphics(), 2, 2)
+,particle_emitter(graphics(), L"particle_gas.png", RenderLayer::Particles)
 {
 	load("autosave.grid");
 
@@ -113,6 +114,8 @@ void GameWindow::draw()
 	wss << L"ms / ";
     wss << 1000/60;
     wss << L"ms - ";
+    wss << particle_emitter.count();
+    wss << L"ms particles - ";
 	if (grid.is_initialized()) {
 		wss << L" grid ready";
 	} else {
@@ -156,6 +159,9 @@ void GameWindow::draw()
 	Toolbox.draw();
 	graphics().popTransform();
 	graphics().popTransform();
+
+    particle_emitter.draw();
+
 	if (dragdrop) {
 		graphics().pushTransform(Gosu::translate(input().mouseX() - gridwdt/double(grid.width())/2, input().mouseY()- gridhgt/double(grid.height())/2));
 		graphics().pushTransform(Gosu::scale(gridwdt/double(grid.width()), gridhgt/double(grid.height())));
@@ -194,6 +200,17 @@ void GameWindow::update()
 	if (input().down(Gosu::kbSpace)) {
 		step();
 	}
+    for(int i = 0; i < 100; i++)
+    particle_emitter.emit()
+        .pos(input().mouseX(), input().mouseY())
+        .ttl(10)
+        .center(0.5, 0.5)
+        .scale(0.5)
+        .color(Gosu::Color::AQUA)
+        .vel(Gosu::random(-50, 50), Gosu::random(-50, 50))
+        .fade(30)
+        ;
+    particle_emitter.update(1.0/60.0);
     update_time = Gosu::milliseconds() - start_time;
 }
 
