@@ -81,7 +81,6 @@ void Pipe::send()
         if (!con) continue;
 		con->push(distr[v[i++]]);
 	}
-	particle_engine.update();
 }
 
 void Pipe::draw(double x, double y)

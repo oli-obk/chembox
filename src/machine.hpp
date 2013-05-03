@@ -4,7 +4,6 @@
 #include "ConnectorDir.hpp"
 #include "Particle.hpp"
 #include "optional.hpp"
-#include "particle_engine.hpp"
 #include <Gosu/Graphics.hpp>
 
 class Connector
@@ -105,7 +104,6 @@ private:
 	void ReInitialize() { m_initialized = false; }
 protected:
 	Machine(const Machine& rhs);
-	ParticleEngine particle_engine;
 	void createConnector(ReceiveFromDir dir);
 	void destroyConnector(ReceiveFromDir dir);
 	void destroyConnectors();

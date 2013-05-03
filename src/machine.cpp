@@ -1,7 +1,6 @@
 #include "machine.hpp"
 
 Machine::Machine(Gosu::Graphics& g)
-:particle_engine(g)
 {
 	m_destroyed = true;
 	m_initialized = false;
@@ -19,7 +18,6 @@ Machine::~Machine()
 }
 
 Machine::Machine(const Machine& rhs)
-:particle_engine(rhs.particle_engine)
 {
 	m_destroyed = true;
 	m_initialized = false;

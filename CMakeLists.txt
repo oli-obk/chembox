@@ -15,8 +15,6 @@ SET(SRC_FILES
 	src/rotatable_machine.cpp
     src/rotatable_versioned_machine.hpp
     src/rotatable_versioned_machine.cpp
-	src/particle_engine.cpp
-	src/particle_engine.hpp
 	src/machine_factory.hpp
 	src/machine_factory.cpp
 

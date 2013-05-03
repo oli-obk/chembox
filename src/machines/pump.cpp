@@ -1,6 +1,7 @@
 #include "pump.hpp"
 #include "defines.hpp"
 #include <Gosu/Math.hpp>
+#include <Gosu/Image.hpp>
 
 
 std::weak_ptr<Gosu::Image> Pump::s_pImagePump, Pump::s_pImageSpinner;

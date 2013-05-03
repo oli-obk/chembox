@@ -5,7 +5,6 @@
 #include <memory>
 #include "Particle.hpp"
 #include <Gosu/Graphics.hpp>
-#include "particle_engine.hpp"
 #include "rotatable_versioned_machine.hpp"
 
 class EndPipe : public RotatableVersionedMachine

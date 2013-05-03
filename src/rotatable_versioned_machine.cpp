@@ -1,6 +1,7 @@
 #include "defines.hpp"
 #include "rotatable_versioned_machine.hpp"
 #include <iostream>
+#include <Gosu/Image.hpp>
 
 std::map<const wchar_t*, std::array<std::weak_ptr<Gosu::Image>, 6>> RotatableVersionedMachine::s_pImage;
 
