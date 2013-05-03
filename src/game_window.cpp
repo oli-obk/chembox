@@ -163,10 +163,8 @@ void GameWindow::draw()
     particle_emitter.draw();
 
 	if (dragdrop) {
-		graphics().pushTransform(Gosu::translate(input().mouseX() - gridwdt/double(grid.width())/2, input().mouseY()- gridhgt/double(grid.height())/2));
 		graphics().pushTransform(Gosu::scale(gridwdt/double(grid.width()), gridhgt/double(grid.height())));
-		dragdrop->draw();
-		graphics().popTransform();
+		dragdrop->draw(input().mouseX() - gridwdt/double(grid.width())/2, input().mouseY()- gridhgt/double(grid.height())/2);
 		graphics().popTransform();
 	}
 }

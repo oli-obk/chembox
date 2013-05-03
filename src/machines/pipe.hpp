@@ -20,7 +20,7 @@ public:
 public:
 	virtual void send();
 	virtual void receive();
-    virtual void draw();
+    virtual void draw(double x, double y);
 	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<Pipe>(new Pipe(*this)); }
 	size_t numActions() const;
 	void Action(size_t id);

@@ -27,13 +27,13 @@ Pump::~Pump()
 {
 }
 
-void Pump::draw()
+void Pump::draw(double x, double y)
 {
-    m_pImagePump->draw( 0, 0, RenderLayer::Machines,
+    m_pImagePump->draw( x, y, RenderLayer::Machines,
                         1.0/double(m_pImagePump->width()),
                         1.0/double(m_pImagePump->height())
                         );
-    m_pImageSpinner->drawRot(   0.5, 0.5, RenderLayer::Machines+1,
+    m_pImageSpinner->drawRot(   x+ 0.5, y + 0.5, RenderLayer::Machines+1,
                                 rotation,
                                 0.5, 0.5,
                                 0.5/double(m_pImageSpinner->width()),

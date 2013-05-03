@@ -12,7 +12,7 @@ protected:
     RotatableVersionedMachine(Gosu::Graphics& g, ReceiveFromDir rot, size_t version, const wchar_t* basename);
     RotatableVersionedMachine(const RotatableVersionedMachine& rhs);
     virtual ~RotatableVersionedMachine() {}
-    virtual void draw();
+    virtual void draw(double x, double y);
 public:
     void set_version(size_t version);
     size_t get_version() const;

@@ -84,14 +84,14 @@ void Pipe::send()
 	particle_engine.update();
 }
 
-void Pipe::draw()
+void Pipe::draw(double x, double y)
 {
-    RotatableVersionedMachine::draw();
+    RotatableVersionedMachine::draw(x, y);
 	size_t count = particles.count(ParticleState::Gas, ParticleType::Hydrogen);
 	if (count != 0) {
 		std::wstringstream wss;
 		wss << count;
-		m_pFont->drawRel(wss.str(), 0.5, 0.5, RenderLayer::Machines+1, 0.5, 0.4, 0.05, 0.05, Gosu::Color::RED);
+		m_pFont->drawRel(wss.str(), x + 0.5, y + 0.5, RenderLayer::Machines+1, 0.5, 0.4, 0.05, 0.05, Gosu::Color::RED);
 	}
 }
 

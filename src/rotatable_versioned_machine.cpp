@@ -83,8 +83,8 @@ RotatableVersionedMachine::RotatableVersionedMachine(const RotatableVersionedMac
     set_version(rhs.get_version());
 }
 
-void RotatableVersionedMachine::draw()
+void RotatableVersionedMachine::draw(double x, double y)
 {
 	double angles[] = { 0, 90, 180, -90 };
-	m_pImage[get_version()]->drawRot(0.5, 0.5, RenderLayer::Machines, angles[static_cast<int>(get_rotation())], 0.5, 0.5, 1.0/double(m_pImage[get_version()]->width()), 1.0/double(m_pImage[get_version()]->height()));
+	m_pImage[get_version()]->drawRot(x+0.5, y+0.5, RenderLayer::Machines, angles[static_cast<int>(get_rotation())], 0.5, 0.5, 1.0/double(m_pImage[get_version()]->width()), 1.0/double(m_pImage[get_version()]->height()));
 }

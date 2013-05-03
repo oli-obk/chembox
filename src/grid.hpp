@@ -103,9 +103,7 @@ public:
 		for (size_t y = 0; y < height(); y++) {
 			for (size_t x = 0; x < width(); x++) {
 				if (!element(x, y)) continue;
-				graphics.pushTransform(Gosu::translate(x, y));
-				element(x, y) -> draw();
-				graphics.popTransform();
+				element(x, y) -> draw(x, y);
 			}
 		}
 	}

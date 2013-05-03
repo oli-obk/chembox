@@ -116,7 +116,7 @@ public:
 	bool isInitialized() const { return m_initialized; }
 	void Destroy() { assert(!m_destroyed); m_destroyed = true; }
 	bool isDestroyed() const { return m_destroyed; }
-	virtual void draw() = 0;
+	virtual void draw(double x, double y) = 0;
 	virtual void send() = 0;
 	virtual void receive() = 0;
 	virtual std::unique_ptr<Machine> clone() = 0;
