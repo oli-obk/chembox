@@ -114,8 +114,8 @@ void GameWindow::draw()
 	wss << L"ms / ";
     wss << 1000/60;
     wss << L"ms - ";
-    wss << particle_emitter.count();
-    wss << L"ms particles - ";
+    wss << particle_emitter.getCount();
+    wss << L" particles - ";
 	if (grid.is_initialized()) {
 		wss << L" grid ready";
 	} else {
@@ -198,16 +198,27 @@ void GameWindow::update()
 	if (input().down(Gosu::kbSpace)) {
 		step();
 	}
-    for(int i = 0; i < 100; i++)
-    particle_emitter.emit()
-        .pos(input().mouseX(), input().mouseY())
-        .ttl(10)
-        .center(0.5, 0.5)
-        .scale(0.5)
-        .color(Gosu::Color::AQUA)
-        .vel(Gosu::random(-50, 50), Gosu::random(-50, 50))
-        .fade(30)
-        ;
+    for(int i = 0; i < 50; i++) {
+        Particle p;
+        p.x = input().mouseX();
+        p.y = input().mouseY();
+        p.time_to_live = 1000;
+        p.center_x = 0.5;
+        p.center_y = 0.5;
+        p.scale = 0.1;
+        p.color.alpha = 1.0;
+        p.color.red = 0.0;
+        p.color.blue = 1.0;
+        p.color.green = 0.5;
+        p.velocity_x = Gosu::random(-1, 1)*10;
+        p.velocity_y = Gosu::random(-1, 1)*10;
+        p.friction = 0.0;
+        p.angle = 0.0;
+        p.angular_velocity = 0.0;
+        p.zoom = 0.0;
+        p.fade = 0.01;
+        particle_emitter.emit(p);
+    }
     particle_emitter.update(1.0/60.0);
     update_time = Gosu::milliseconds() - start_time;
 }

@@ -32,7 +32,7 @@ protected:
 	Grid Toolbox;
 	std::unique_ptr<Machine> dragdrop;
     unsigned long update_time;
-    ParticleEmitter<30000> particle_emitter;
+    ParticleEmitter particle_emitter;
 public:
 	int getMouseXInGrid() const;
 	int getMouseYInGrid() const;

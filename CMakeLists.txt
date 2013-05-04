@@ -24,6 +24,12 @@ SET(SRC_FILES
 	src/machines/pump.hpp
 	src/machines/end_pipe.cpp
 	src/machines/end_pipe.hpp
+
+    src/fast_math.cpp
+    src/fast_math.hpp
+
+    src/ParticleEmitter.cpp
+    src/ParticleEmitter.hpp
 	)
 
 #Projects headers files
@@ -31,7 +37,6 @@ SET(INC_FILES
     src/game_window.hpp
 	include/optional.hpp
 	src/ConnectorDir.hpp
-    src/ParticleEmitter.hpp
 	)
 INCLUDE_DIRECTORIES(include src)
 
@@ -46,7 +51,8 @@ find_package(Gosu REQUIRED)
 INCLUDE_DIRECTORIES(${Gosu_INCLUDE_DIRS})
 LINK_DIRECTORIES(${Gosu_LIBRARY_DIRS})
 
-set(CPPFLAGS ${CPPFLAGS} -D_GLIBCXX_DEBUG)
+set(CMAKE_CXX_COMPILER g++-4.7)
+#set(CPPFLAGS ${CPPFLAGS} -D_GLIBCXX_DEBUG)
 
 #Build
 ADD_EXECUTABLE(ChemBox ${SRC_FILES})
