@@ -6,7 +6,7 @@
 std::map<const wchar_t*, std::array<std::weak_ptr<Gosu::Image>, 6>> RotatableVersionedMachine::s_pImage;
 
 RotatableVersionedMachine::RotatableVersionedMachine(Gosu::Graphics& g, ReceiveFromDir rot, size_t version, const wchar_t* basename)
-:RotatableMachine(g, rot)
+:RotatableMachine(rot)
 {
 	for (size_t i = 0; i < s_pImage[basename].size(); i++) {
 		m_pImage[i] = s_pImage[basename][i].lock();

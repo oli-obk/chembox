@@ -1,6 +1,6 @@
 #include "machine.hpp"
 
-Machine::Machine(Gosu::Graphics& g)
+Machine::Machine()
 {
 	m_destroyed = true;
 	m_initialized = false;

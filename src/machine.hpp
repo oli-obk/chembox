@@ -127,7 +127,9 @@ public:
 
 	void communicate();
 	void insert(ParticleState, ParticleType, int count);
-	Machine(Gosu::Graphics& g);
+protected:
+	Machine();
+public:
 	virtual ~Machine();
 };
 

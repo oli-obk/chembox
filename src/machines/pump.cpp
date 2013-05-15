@@ -7,8 +7,7 @@
 std::weak_ptr<Gosu::Image> Pump::s_pImagePump, Pump::s_pImageSpinner;
 
 Pump::Pump(Gosu::Graphics& g)
-:Machine(g)
-,m_pImagePump(s_pImagePump.lock())
+:m_pImagePump(s_pImagePump.lock())
 ,m_pImageSpinner(s_pImageSpinner.lock())
 {
     if (!m_pImagePump) {
