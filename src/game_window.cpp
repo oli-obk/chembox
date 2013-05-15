@@ -22,7 +22,7 @@ GameWindow::GameWindow()
 ,font(graphics(), Gosu::defaultFontName(), 20)
 ,grid(graphics(), 16, 16)
 ,Toolbox(graphics(), 2, 2)
-,particle_emitter(graphics(), L"particle_gas.png", RenderLayer::Particles)
+,particle_emitter(graphics(), L"particle_gas.png", RenderLayer::Particles, 50000)
 {
 	load("autosave.grid");
 
@@ -219,7 +219,7 @@ void GameWindow::update()
         p.fade = 0.01;
         particle_emitter.emit(p);
     }
-    particle_emitter.update(1.0/60.0);
+    particle_emitter.update();
     update_time = Gosu::milliseconds() - start_time;
 }
 

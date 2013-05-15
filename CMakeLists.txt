@@ -25,11 +25,13 @@ SET(SRC_FILES
 	src/machines/end_pipe.cpp
 	src/machines/end_pipe.hpp
 
-    src/fast_math.cpp
-    src/fast_math.hpp
+    lib/GosuParticleEngine/src/fast_math.cpp
+    lib/GosuParticleEngine/src/fast_math.hpp
 
-    src/ParticleEmitter.cpp
-    src/ParticleEmitter.hpp
+    lib/GosuParticleEngine/src/ParticleEmitter.cpp
+    lib/GosuParticleEngine/src/ParticleEmitter.hpp
+    lib/GosuParticleEngine/src/Particle.cpp
+    lib/GosuParticleEngine/src/Particle.hpp
 	)
 
 #Projects headers files
@@ -38,7 +40,11 @@ SET(INC_FILES
 	include/optional.hpp
 	src/ConnectorDir.hpp
 	)
-INCLUDE_DIRECTORIES(include src)
+INCLUDE_DIRECTORIES(
+include
+src
+lib/GosuParticleEngine/src/
+)
 
 #"Sources" and "Headers" are the group names in Visual Studio.
 #They may have other uses too...
