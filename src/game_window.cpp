@@ -22,7 +22,7 @@ GameWindow::GameWindow()
 ,font(graphics(), Gosu::defaultFontName(), 20)
 ,grid(graphics(), 16, 16)
 ,Toolbox(graphics(), 2, 2)
-,particle_emitter(graphics(), L"particle_gas.png", RenderLayer::Particles, 50000)
+,effects(Machine::effects(graphics()))
 {
 	load("autosave.grid");
 
@@ -114,7 +114,7 @@ void GameWindow::draw()
 	wss << L"ms / ";
     wss << 1000/60;
     wss << L"ms - ";
-    wss << particle_emitter.getCount();
+    wss << effects->getTotalParticleCount();
     wss << L" particles - ";
 	if (grid.is_initialized()) {
 		wss << L" grid ready";
@@ -151,7 +151,10 @@ void GameWindow::draw()
 	}
 	graphics().pushTransform(Gosu::translate(gridx, gridy));
 	graphics().pushTransform(Gosu::scale(gridwdt/double(grid.width()), gridhgt/double(grid.height())));
+    effects->setTransform(gridx, gridy);
+    effects->setScale(gridwdt/double(grid.width()), gridhgt/double(grid.height()));
 	grid.draw();
+    effects->draw();
 	graphics().popTransform();
 	graphics().popTransform();
 	graphics().pushTransform(Gosu::translate(toolboxx, toolboxy));
@@ -159,8 +162,6 @@ void GameWindow::draw()
 	Toolbox.draw();
 	graphics().popTransform();
 	graphics().popTransform();
-
-    particle_emitter.draw();
 
 	if (dragdrop) {
 		graphics().pushTransform(Gosu::scale(gridwdt/double(grid.width()), gridhgt/double(grid.height())));
@@ -198,28 +199,7 @@ void GameWindow::update()
 	if (input().down(Gosu::kbSpace)) {
 		step();
 	}
-    for(int i = 0; i < 50; i++) {
-        Particle p;
-        p.x = input().mouseX();
-        p.y = input().mouseY();
-        p.time_to_live = 1000;
-        p.center_x = 0.5;
-        p.center_y = 0.5;
-        p.scale = 0.1;
-        p.color.alpha = 1.0;
-        p.color.red = 0.0;
-        p.color.blue = 1.0;
-        p.color.green = 0.5;
-        p.velocity_x = Gosu::random(-1, 1)*10;
-        p.velocity_y = Gosu::random(-1, 1)*10;
-        p.friction = 0.0;
-        p.angle = 0.0;
-        p.angular_velocity = 0.0;
-        p.zoom = 0.0;
-        p.fade = 0.01;
-        particle_emitter.emit(p);
-    }
-    particle_emitter.update();
+    effects->update();
     update_time = Gosu::milliseconds() - start_time;
 }
 

@@ -10,7 +10,7 @@
 #include "helpers.hpp"
 #include "grid.hpp"
 #include "machine.hpp"
-#include "ParticleEmitter.hpp"
+#include "Effects.hpp"
 
 class GameWindow : public Gosu::Window
 {
@@ -32,7 +32,7 @@ protected:
 	Grid Toolbox;
 	std::unique_ptr<Machine> dragdrop;
     unsigned long update_time;
-    ParticleEmitter particle_emitter;
+    std::shared_ptr<Effects> effects;
 public:
 	int getMouseXInGrid() const;
 	int getMouseYInGrid() const;

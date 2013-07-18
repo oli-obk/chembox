@@ -25,6 +25,9 @@ SET(SRC_FILES
 	src/machines/end_pipe.cpp
 	src/machines/end_pipe.hpp
 
+    src/Effects.hpp
+    src/Effects.cpp
+
     lib/GosuParticleEngine/src/fast_math.cpp
     lib/GosuParticleEngine/src/fast_math.hpp
 

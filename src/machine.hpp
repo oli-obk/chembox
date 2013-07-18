@@ -5,6 +5,7 @@
 #include "Particle.hpp"
 #include "optional.hpp"
 #include <Gosu/Graphics.hpp>
+#include "Effects.hpp"
 
 class Connector
 {
@@ -126,10 +127,13 @@ public:
     static constexpr const char* deserializes();
 
 	void communicate();
-	void insert(ParticleState, ParticleType, int count);
 protected:
-	Machine();
+    static std::weak_ptr<Effects> s_pEffects;
+    std::shared_ptr<Effects> pEffects;
+	Machine(Gosu::Graphics& g);
 public:
+    Effects& effects() { return *pEffects; };
+    static std::shared_ptr<Effects> effects(Gosu::Graphics& g);
 	virtual ~Machine();
 };
 

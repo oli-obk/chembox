@@ -3,6 +3,7 @@
 #include <Gosu/Font.hpp>
 #include <Gosu/Text.hpp>
 #include "defines.hpp"
+#include <Gosu/Math.hpp>
 
 Pipe::~Pipe()
 {
@@ -56,7 +57,9 @@ void Pipe::receive()
 	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
         auto con = getConnector(dir);
         if (!con) continue;
-		particles += con->pop();
+        auto parts = con->pop();
+        particles_to_render[int(dir)] -= parts;
+        particles += parts;
 	}
 }
 
@@ -78,8 +81,13 @@ void Pipe::send()
     size_t i = 0;
 	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
         auto con = getConnector(dir);
-        if (!con) continue;
-		con->push(distr[v[i++]]);
+        if (!con) {
+            particles_to_render[int(dir)].clear();
+            continue;
+        }
+        auto& parts = distr[v[i++]];
+        particles_to_render[int(dir)] = parts;
+        con->push(parts);
 	}
     particles = distr[v[i]];
 }
@@ -92,6 +100,30 @@ void Pipe::draw(double x, double y)
 		std::wstringstream wss;
 		wss << count;
 		m_pFont->drawRel(wss.str(), x + 0.5, y + 0.5, RenderLayer::Machines+1, 0.5, 0.4, 0.05, 0.05, Gosu::Color::RED);
+	}
+
+	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
+        int count = particles_to_render[int(dir)].count(ParticleState::Gas, ParticleType::Hydrogen);
+        if (count <= 1) continue;
+        Particle p;
+        p.x = x + 0.5 + Gosu::random(-0.1, 0.1)*getYDir(dir);
+        p.y = y + 0.5 + Gosu::random(-0.1, 0.1)*getXDir(dir);
+        p.velocity_x = 0.05*getXDir(dir);
+        p.velocity_y = 0.05*getYDir(dir);
+        p.time_to_live = 10;
+        p.center_x = 0.5;
+        p.center_y = 0.5;
+        p.scale = 0.1;
+        p.color.alpha = 1.0;
+        p.color.red = 0.0;
+        p.color.blue = 1.0;
+        p.color.green = 0.5;
+        p.friction = 0.0;
+        p.angle = 0.0;
+        p.angular_velocity = 0.0;
+        p.zoom = 0.0;
+        p.fade = 0.01;
+        effects().emit(L"particle_gas.png", p);
 	}
 }
 

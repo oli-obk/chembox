@@ -24,13 +24,13 @@ typedef builtin_wrapper<uint64_t> ParticleEnergy;
 class ParticleMap
 {
 private:
-	std::map<ParticleState, std::map<ParticleType, builtin_wrapper<uint32_t>>> data;
+	std::map<ParticleState, std::map<ParticleType, builtin_wrapper<int>>> data;
 public:
 	ParticleMap() {};
 
     void clear() { data.clear(); }
 
-	size_t count(ParticleState state, ParticleType type) const
+	int count(ParticleState state, ParticleType type) const
 	{
 		auto it = data.find(state);
 		if (it == data.end()) return 0;
@@ -38,7 +38,7 @@ public:
 		if (it2 == it->second.end()) return 0;
 		return it2->second;
 	}
-	ParticleMap(ParticleState state, ParticleType type, unsigned count)
+	ParticleMap(ParticleState state, ParticleType type, int count)
 	{
 		data[state][type] = count;
 	}
@@ -49,7 +49,6 @@ public:
 
 	void subtract(ParticleState state, ParticleType type, unsigned count)
 	{
-		assert(data[state][type] >= count);
 		data[state][type] -= count;
 	}
 
@@ -67,7 +66,6 @@ public:
 	{
 		for (auto& a:rhs.data) {
 			for (auto& b:a.second) {
-				assert(b.second <= data[a.first][b.first]);
 				data[a.first][b.first] -= b.second;
 			}
 		}

@@ -7,7 +7,7 @@ class RotatableMachine : public Machine
 {
     ReceiveFromDir rotation;
 protected:
-    RotatableMachine(ReceiveFromDir dir);
+    RotatableMachine(Gosu::Graphics& g, ReceiveFromDir dir);
     RotatableMachine(const RotatableMachine& rhs);
 
     void set_rotation(ReceiveFromDir rot);
@@ -17,6 +17,8 @@ protected:
 	void createConnector(ReceiveFromDir dir);
 	void destroyConnector(ReceiveFromDir dir);
 public:
+    double getXDir(ReceiveFromDir dir) const;
+    double getYDir(ReceiveFromDir dir) const;
     virtual ~RotatableMachine();
 
 };
