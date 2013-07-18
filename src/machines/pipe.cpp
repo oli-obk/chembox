@@ -63,7 +63,7 @@ void Pipe::receive()
 void Pipe::send()
 {
     // count connections
-    size_t connections = 0;
+    size_t connections = 1;
 	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
         auto con = getConnector(dir);
         if (con) connections++;
@@ -72,7 +72,7 @@ void Pipe::send()
     auto distr = particles.split(connections);
     particles.clear();
 
-    size_t v[] = {0, 1, 2, 3};
+    size_t v[] = {0, 1, 2, 3, 4};
     std::shuffle(std::begin(v), v+connections, engine);
     // send stuff from buffer
     size_t i = 0;
@@ -81,6 +81,7 @@ void Pipe::send()
         if (!con) continue;
 		con->push(distr[v[i++]]);
 	}
+    particles = distr[v[i]];
 }
 
 void Pipe::draw(double x, double y)
