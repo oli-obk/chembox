@@ -29,6 +29,8 @@ GameWindow::GameWindow()
 	Toolbox.reset(0, 0, new Pipe(graphics(), ReceiveFromDir::Up, 4));
 	Toolbox.reset(1, 0, new EndPipe(graphics(), ReceiveFromDir::Down));
 	Toolbox.reset(0, 1, new Pump(graphics()));
+	
+	render_speed = 0;
 }
 
 GameWindow::~GameWindow()
@@ -73,6 +75,14 @@ void GameWindow::buttonUp(Gosu::Button btn)
 {
 	if (btn == Gosu::kbReturn) {
 		step();
+	} else if (btn == Gosu::kbBackspace) {
+		render_speed = 0;
+	} else if (btn == Gosu::kbRight) {
+		render_speed = -10;
+	} else if (btn == Gosu::kbLeft) {
+		render_speed = 50;
+	} else if (btn == Gosu::kbDown) {
+		render_speed = 10;
 	} else if (btn.id() >= Gosu::msRangeBegin && btn.id() <= Gosu::msRangeEnd) {
 		int x = getMouseXInGrid();
 		int y = getMouseYInGrid();
@@ -196,8 +206,18 @@ void GameWindow::releaseMemory()
 void GameWindow::update()
 {
     auto start_time = Gosu::milliseconds();
-	if (input().down(Gosu::kbSpace)) {
-		step();
+	if (render_speed < 0) {
+		for (int i = 0; i < -render_speed; i++) {
+			step();
+		}
+		effects->update();
+	} else if (render_speed > 0) {
+		render_speed_steps++;
+		if (render_speed_steps > render_speed) {
+			render_speed_steps = 0;
+			step();
+		}
+		effects->update();
 	}
     update_time = Gosu::milliseconds() - start_time;
 }
@@ -206,7 +226,6 @@ void GameWindow::step()
 {
 	if (grid.check_initialization()) {
 		grid.update();
-        effects->update();
 	}
 }
 

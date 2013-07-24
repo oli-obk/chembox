@@ -22,7 +22,6 @@ public:
 public:
 	virtual void send();
 	virtual void receive();
-    virtual void update(int x, int y);
     virtual void draw(double x, double y);
 	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<Pipe>(new Pipe(*this)); }
 	size_t numActions() const;

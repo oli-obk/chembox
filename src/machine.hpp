@@ -120,8 +120,6 @@ public:
 	virtual void send() = 0;
     // pop your particles from the connectors in this function
 	virtual void receive() = 0;
-    // do additional stuff after receive here
-    virtual void update(int /*x*/, int /*y*/) {}
 	virtual std::unique_ptr<Machine> clone() = 0;
 	virtual void Action(size_t /* action_id */) {};
 	virtual size_t numActions() const { return 0; }
