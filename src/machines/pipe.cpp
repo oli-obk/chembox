@@ -33,6 +33,8 @@ Pipe::Pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
 :RotatableVersionedMachine(g, dir, version, L"pipe")
 ,m_pFont(s_pFont.lock())
 {
+    particles_to_render.fill(0);
+    particles_to_render_interpolated.fill(0);
     if (!m_pFont) {
 		m_pFont.reset(new Gosu::Font(g, Gosu::defaultFontName(), 10));
 		s_pFont = m_pFont;
@@ -44,6 +46,8 @@ Pipe::Pipe(const Pipe& rhs)
 ,m_pFont(rhs.m_pFont)
 ,particles(particles)
 {
+    particles_to_render.fill(0);
+    particles_to_render_interpolated.fill(0);
 }
 
 size_t Pipe::numActions() const
@@ -58,7 +62,7 @@ void Pipe::receive()
         auto con = getConnector(dir);
         if (!con) continue;
         auto parts = con->pop();
-        particles_to_render[int(dir)] -= parts;
+        particles_to_render[int(dir)] -= parts.count(ParticleState::Gas, ParticleType::Hydrogen);
         particles += parts;
 	}
 }
@@ -82,11 +86,11 @@ void Pipe::send()
 	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
         auto con = getConnector(dir);
         if (!con) {
-            particles_to_render[int(dir)].clear();
+            particles_to_render[int(dir)] = 0;
             continue;
         }
         auto& parts = distr[v[i++]];
-        particles_to_render[int(dir)] = parts;
+        particles_to_render[int(dir)] = parts.count(ParticleState::Gas, ParticleType::Hydrogen);
         con->push(parts);
 	}
     particles = distr[v[i]];
@@ -100,30 +104,6 @@ void Pipe::draw(double x, double y)
 		std::wstringstream wss;
 		wss << count;
 		m_pFont->drawRel(wss.str(), x + 0.5, y + 0.5, RenderLayer::Machines+1, 0.5, 0.4, 0.05, 0.05, Gosu::Color::RED);
-	}
-
-	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
-        int count = particles_to_render[int(dir)].count(ParticleState::Gas, ParticleType::Hydrogen);
-        if (count <= 1) continue;
-        Particle p;
-        p.x = x + 0.5 + Gosu::random(-0.1, 0.1)*getYDir(dir);
-        p.y = y + 0.5 + Gosu::random(-0.1, 0.1)*getXDir(dir);
-        p.velocity_x = 0.05*getXDir(dir);
-        p.velocity_y = 0.05*getYDir(dir);
-        p.time_to_live = 10;
-        p.center_x = 0.5;
-        p.center_y = 0.5;
-        p.scale = 0.1;
-        p.color.alpha = 1.0;
-        p.color.red = 0.0;
-        p.color.blue = 1.0;
-        p.color.green = 0.5;
-        p.friction = 0.0;
-        p.angle = 0.0;
-        p.angular_velocity = 0.0;
-        p.zoom = 0.0;
-        p.fade = 0.01;
-        effects().emit(L"particle_gas.png", p);
 	}
 }
 
@@ -223,4 +203,38 @@ size_t get_serialization_version(char c)
 Pipe::Pipe(char c, Gosu::Graphics& g)
 :Pipe(g, get_serialization_rotation(c), get_serialization_version(c))
 {
+}
+
+void Pipe::update(int x, int y)
+{
+	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
+        auto& a = particles_to_render_interpolated[int(dir)];
+        auto& b = particles_to_render[int(dir)];
+        a = Gosu::interpolate(a, b, 0.01);
+
+        // epsilon = 0.1, only draw outgoing particles
+        if (a <= 0.1) continue;
+        // sparse particles
+        if (Gosu::random(0, 100) > 10) continue;
+        Particle p;
+        p.x = x + 0.5 + Gosu::random(-0.1, 0.1)*getYDir(dir);
+        p.y = y + 0.5 + Gosu::random(-0.1, 0.1)*getXDir(dir);
+        double vel = 0.05;
+        p.velocity_x = vel*getXDir(dir);
+        p.velocity_y = vel*getYDir(dir);
+        p.time_to_live = 1.0/vel;
+        p.center_x = 0.5;
+        p.center_y = 0.5;
+        p.scale = log(a+1);
+        p.color.alpha = 1.0;
+        p.color.red = 0.0;
+        p.color.blue = 1.0;
+        p.color.green = 0.5;
+        p.friction = 0.0;
+        p.angle = 0.0;
+        p.angular_velocity = 0.0;
+        p.zoom = 0.0;
+        p.fade = 0.2;
+        effects().emit(L"particle_gas.png", p);
+	}
 }

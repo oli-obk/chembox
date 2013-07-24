@@ -199,7 +199,6 @@ void GameWindow::update()
 	if (input().down(Gosu::kbSpace)) {
 		step();
 	}
-    effects->update();
     update_time = Gosu::milliseconds() - start_time;
 }
 
@@ -207,6 +206,7 @@ void GameWindow::step()
 {
 	if (grid.check_initialization()) {
 		grid.update();
+        effects->update();
 	}
 }
 

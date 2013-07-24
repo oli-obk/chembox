@@ -12,7 +12,8 @@ private:
 	static std::weak_ptr<Gosu::Font> s_pFont;
     static std::mt19937 engine; // Mersenne twister MT19937
 	ParticleMap particles;
-    ParticleMap particles_to_render[4];
+    std::array<double, 4> particles_to_render;
+    std::array<double, 4> particles_to_render_interpolated;
 public:
 	Pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version = 0);
     Pipe(char c, Gosu::Graphics& g);
@@ -21,6 +22,7 @@ public:
 public:
 	virtual void send();
 	virtual void receive();
+    virtual void update(int x, int y);
     virtual void draw(double x, double y);
 	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<Pipe>(new Pipe(*this)); }
 	size_t numActions() const;

@@ -94,6 +94,7 @@ public:
 				auto& e = element(x, y);
 				if (!e) continue;
 				e -> receive();
+                e -> update(x, y);
 			}
 		}
 	}

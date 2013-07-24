@@ -116,8 +116,12 @@ public:
 	void Destroy() { assert(!m_destroyed); m_destroyed = true; }
 	bool isDestroyed() const { return m_destroyed; }
 	virtual void draw(double x, double y) = 0;
+    // push your particles to the connectors in this function
 	virtual void send() = 0;
+    // pop your particles from the connectors in this function
 	virtual void receive() = 0;
+    // do additional stuff after receive here
+    virtual void update(int /*x*/, int /*y*/) {}
 	virtual std::unique_ptr<Machine> clone() = 0;
 	virtual void Action(size_t /* action_id */) {};
 	virtual size_t numActions() const { return 0; }
