@@ -12,6 +12,7 @@ private:
 	static std::weak_ptr<Gosu::Font> s_pFont;
     static std::mt19937 engine; // Mersenne twister MT19937
 	ParticleMap particles;
+	std::array<ParticleMap, 4> flowing_particles;
     std::array<double, 4> particles_to_render;
     std::array<double, 4> particles_to_render_interpolated;
 public:

@@ -6,6 +6,7 @@
 #include <cstddef>
 #include <cassert>
 #include <vector>
+#include <array>
 
 enum class ParticleState
 {
@@ -25,10 +26,27 @@ class ParticleMap
 {
 private:
 	std::map<ParticleState, std::map<ParticleType, builtin_wrapper<int>>> data;
+    ParticleMap& operator=(const ParticleMap&) = delete;
+    ParticleMap(const ParticleMap&) = delete;
 public:
+    ParticleMap(ParticleMap&& rhs)
+    {
+        data = std::move(rhs.data);
+    }
+    
+    ParticleMap& operator=(ParticleMap&& rhs)
+    {
+        assert(data.empty());
+        data = std::move(rhs.data);
+        return *this;
+    }
+    
+    void swap(ParticleMap& other)
+    {
+        std::swap(other.data, data);
+    }
+    
 	ParticleMap() {};
-
-    void clear() { data.clear(); }
 
 	int count(ParticleState state, ParticleType type) const
 	{
@@ -38,6 +56,40 @@ public:
 		if (it2 == it->second.end()) return 0;
 		return it2->second;
 	}
+	
+	int count(ParticleType type) const
+	{
+		int ret = 0;
+		for (auto& a:data) {
+			auto it = a.second.find(type);
+			if (it == a.second.end()) continue;
+			ret += it->second;
+		}
+		return ret;
+	}
+	
+	int count(ParticleState state) const
+	{
+		auto it = data.find(state);
+		if (it == data.end()) return 0;
+		int ret = 0;
+		for (auto& b:it->second) {
+			ret += b.second;
+		}
+		return ret;
+	}
+	
+	int count() const
+	{
+		int ret = 0;
+		for (auto& a:data) {
+			for (auto& b:a.second) {
+				ret += b.second;
+			}
+		}
+		return ret;
+	}
+	
 	ParticleMap(ParticleState state, ParticleType type, int count)
 	{
 		data[state][type] = count;
@@ -52,40 +104,32 @@ public:
 		data[state][type] -= count;
 	}
 
-	ParticleMap& operator += (const ParticleMap& rhs)
+	ParticleMap& operator += (ParticleMap&& rhs)
 	{
 		for (auto& a:rhs.data) {
 			for (auto& b:a.second) {
 				data[a.first][b.first] += b.second;
 			}
 		}
+        rhs.data.clear();
 		return *this;
 	}
 
-	ParticleMap& operator -= (const ParticleMap& rhs)
+	ParticleMap& operator -= (ParticleMap&& rhs)
 	{
 		for (auto& a:rhs.data) {
 			for (auto& b:a.second) {
 				data[a.first][b.first] -= b.second;
 			}
 		}
+        rhs.data.clear();
 		return *this;
 	}
 
-	ParticleMap operator/(size_t divisor)
+	template<size_t divisor>
+	std::array<ParticleMap, divisor> split()
 	{
-		ParticleMap ret;
-		for (auto& a:data) {
-			for (auto& b:a.second) {
-				ret.data[a.first][b.first] = b.second/divisor;
-			}
-		}
-		return ret;
-	}
-
-	std::vector<ParticleMap> split(size_t divisor)
-	{
-		std::vector<ParticleMap> ret(divisor, ParticleMap());
+		std::array<ParticleMap, divisor> ret;
 		for (auto& a:data) {
 			for (auto& b:a.second) {
                 for (size_t i = 0; i < divisor; i++) {
@@ -98,28 +142,26 @@ public:
                 }
 			}
 		}
+        data.clear();
 		return ret;
 	}
 
-	ParticleMap operator%(size_t divisor)
+	std::vector<ParticleMap> split(size_t divisor)
 	{
-		ParticleMap ret;
+		std::vector<ParticleMap> ret(divisor);
 		for (auto& a:data) {
 			for (auto& b:a.second) {
-				ret.data[a.first][b.first] = b.second%divisor;
+                for (size_t i = 0; i < divisor; i++) {
+                    ret[i].data[a.first][b.first] = b.second/divisor;
+                }
+                // increase the first "rest" bins
+                size_t rest = b.second%divisor;
+                for (size_t i = 0; i < rest; i++) {
+                    ret[i].data[a.first][b.first]++;
+                }
 			}
 		}
-		return ret;
-	}
-
-	ParticleMap operator*(size_t mul)
-	{
-		ParticleMap ret;
-		for (auto& a:data) {
-			for (auto& b:a.second) {
-				ret.data[a.first][b.first] = b.second*mul;
-			}
-		}
+        data.clear();
 		return ret;
 	}
 };

@@ -14,6 +14,11 @@ inline ReceiveFromDir operator+(ReceiveFromDir lhs, int rhs)
     return static_cast<ReceiveFromDir>(((static_cast<int>(lhs)+rhs)%4+4)%4);
 }
 
+inline ReceiveFromDir operator-(ReceiveFromDir lhs, int rhs)
+{
+    return static_cast<ReceiveFromDir>(((static_cast<int>(lhs)-rhs)%4+4)%4);
+}
+
 inline ReceiveFromDir operator+(ReceiveFromDir lhs, ReceiveFromDir rhs)
 {
     return static_cast<ReceiveFromDir>(((static_cast<int>(lhs)+static_cast<int>(rhs)))%4);

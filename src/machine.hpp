@@ -63,17 +63,17 @@ public:
 #endif //NDEBUG
     }
 
-	void push(ParticleMap parts)
+	void push(ParticleMap&& parts)
 	{
 		assert(other);
 #ifndef NDEBUG
 		assert(__state == ConnectorState::Pushing || __state == ConnectorState::ReadyToPush);
 		__state = ConnectorState::Pushing;
 #endif //NDEBUG
-		particles += parts;
+		particles += std::move(parts);
 	}
 
-	ParticleMap pop()
+	ParticleMap&& pop()
 	{
 		assert(other);
 #ifndef NDEBUG

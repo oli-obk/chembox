@@ -15,8 +15,7 @@ void EndPipe::send()
 	for (auto dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
 		auto con = getConnector(dir);
 		if (!con) continue;
-		con->push(particles[static_cast<size_t>(dir)]);
-        particles[static_cast<size_t>(dir)].clear();
+		con->push(std::move(particles[static_cast<size_t>(dir)]));
 	}
 }
 

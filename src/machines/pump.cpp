@@ -51,8 +51,7 @@ void Pump::receive()
 
 void Pump::send()
 {
-    getConnector(ReceiveFromDir::Up)->push(particles);
-    particles.clear();
+    getConnector(ReceiveFromDir::Up)->push(std::move(particles));
     getConnector(ReceiveFromDir::Left)->push();
 }
 

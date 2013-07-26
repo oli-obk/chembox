@@ -44,7 +44,6 @@ Pipe::Pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
 Pipe::Pipe(const Pipe& rhs)
 :RotatableVersionedMachine(rhs)
 ,m_pFont(rhs.m_pFont)
-,particles(particles)
 {
     particles_to_render.fill(0);
     particles_to_render_interpolated.fill(0);
@@ -62,11 +61,40 @@ void Pipe::receive()
         auto con = getConnector(dir);
         if (!con) continue;
         auto parts = con->pop();
-        particles_to_render[int(dir)] -= parts.count(ParticleState::Gas, ParticleType::Hydrogen);
-        particles += parts;
+        
+        particles_to_render[int(dir)] -= parts.count() + flowing_particles[int(dir)].count();
+        
+        if (getConnector(flip(dir))) {
+            auto split = parts.split<2>();
+            size_t v[] = {0, 1, 2, 3, 4};
+            std::shuffle(std::begin(v), v+2, engine);
+            flowing_particles[int(flip(dir))] += std::move(split[v[0]]);
+            particles += std::move(split[v[1]]);
+        } else if(getConnector(dir+1) && getConnector(dir-1)) {
+            auto split = parts.split<3>();
+            size_t v[] = {0, 1, 2, 3, 4};
+            std::shuffle(std::begin(v), v+3, engine);
+            flowing_particles[int(dir+1)] += std::move(split[v[0]]);
+            flowing_particles[int(dir-1)] += std::move(split[v[1]]);
+            particles += std::move(split[v[2]]);
+        } else if(getConnector(dir+1)) {
+            auto split = parts.split<2>();
+            size_t v[] = {0, 1, 2, 3, 4};
+            std::shuffle(std::begin(v), v+2, engine);
+            flowing_particles[int(dir+1)] += std::move(split[v[0]]);
+            particles += std::move(split[v[1]]);
+        } else if(getConnector(dir-1)) {
+            auto split = parts.split<2>();
+            size_t v[] = {0, 1, 2, 3, 4};
+            std::shuffle(std::begin(v), v+2, engine);
+            flowing_particles[int(dir-1)] += std::move(split[v[0]]);
+            particles += std::move(split[v[1]]);
+        } else {
+            particles += std::move(parts);
+        }
         auto& a = particles_to_render_interpolated[int(dir)];
         a = Gosu::interpolate(a, particles_to_render[int(dir)], 0.01);
-	}
+    }
 }
 
 void Pipe::send()
@@ -79,7 +107,6 @@ void Pipe::send()
     }
     // prepare sending buffer
     auto distr = particles.split(connections);
-    particles.clear();
 
     size_t v[] = {0, 1, 2, 3, 4};
     std::shuffle(std::begin(v), v+connections, engine);
@@ -92,23 +119,25 @@ void Pipe::send()
             continue;
         }
         auto& parts = distr[v[i++]];
-        particles_to_render[int(dir)] = parts.count(ParticleState::Gas, ParticleType::Hydrogen);
-        con->push(parts);
-	}
-    particles = distr[v[i]];
+        particles_to_render[int(dir)] = parts.count() + flowing_particles[int(dir)].count();
+        con->push(std::move(parts));
+        con->push(std::move(flowing_particles[int(dir)]));
+    }
+    particles = std::move(distr[v[i]]);
 }
 
 void Pipe::draw(double x, double y)
 {
     RotatableVersionedMachine::draw(x, y);
-	size_t count = particles.count(ParticleState::Gas, ParticleType::Hydrogen);
-	if (count != 0) {
-		std::wstringstream wss;
-		wss << count;
-		m_pFont->drawRel(wss.str(), x + 0.5, y + 0.5, RenderLayer::Machines+1, 0.5, 0.4, 0.05, 0.05, Gosu::Color::RED);
-	}
-	
-	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
+    size_t count = particles.count();
+    
+    if (count != 0) {
+        std::wstringstream wss;
+        wss << count;
+        m_pFont->drawRel(wss.str(), x + 0.5, y + 0.5, RenderLayer::Particles+1, 0.5, 0.4, 0.05, 0.05, Gosu::Color::RED);
+    }
+    
+    for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
         const auto a = particles_to_render_interpolated[int(dir)];
         // epsilon = 0.1, only draw outgoing particles
         if (a <= 0.1) continue;
