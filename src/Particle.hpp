@@ -205,7 +205,7 @@ inline void intersect(ParticleMap& left, ParticleMap& right, ParticleMap& inters
                 ra->second.erase(b.first);
             } else if (b.second > rb->second) {
                 int diff = b.second - rb->second;
-                intersection.data[a.first][b.first] += diff*2;
+                intersection.data[a.first][b.first] += rb->second*2;
                 b.second = diff;
                 ra->second.erase(b.first);
             } // other case handled in second loop
@@ -220,7 +220,7 @@ inline void intersect(ParticleMap& left, ParticleMap& right, ParticleMap& inters
             
             if (b.second > lb->second) {
                 int diff = b.second - lb->second;
-                intersection.data[a.first][b.first] += diff*2;
+                intersection.data[a.first][b.first] += lb->second*2;
                 b.second = diff;
                 la->second.erase(b.first);
             } // other cases handled in first loop
