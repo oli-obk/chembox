@@ -24,11 +24,11 @@ public:
 	virtual void send();
 	virtual void receive();
     virtual void draw(double x, double y);
-	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<Pipe>(new Pipe(*this)); }
+	virtual std::unique_ptr<Machine> clone() const { return std::unique_ptr<Pipe>(new Pipe(*this)); }
 	size_t numActions() const;
 	void Action(size_t id);
-    char serialize();
-    static const std::string deserializes() { return R"(L7/\-|+><v^)"; }
+    char serialize() const;
+    static const std::string deserializes() { return R"(L7/\+><v^)"; }
 };
 
 #endif // PIPE_HPP

@@ -23,6 +23,12 @@ public:
 	{
 		return val += rhs;
 	}
+    
+    T& operator *= (const T& rhs)
+    {
+        return val *= rhs;
+    }
+    
 	T& operator-= (const T& rhs)
 	{
 		return val -= rhs;

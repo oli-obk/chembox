@@ -21,9 +21,9 @@ public:
 public:
 	virtual void send();
 	virtual void receive();
-	virtual std::unique_ptr<Machine> clone() { return std::unique_ptr<EndPipe>(new EndPipe(*this)); }
+	virtual std::unique_ptr<Machine> clone() const { return std::unique_ptr<EndPipe>(new EndPipe(*this)); }
 
-    char serialize() { return 'X'; }
+    char serialize() const { return 'X'; }
     static const std::string deserializes() { return "X"; }
 };
 

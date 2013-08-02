@@ -55,7 +55,7 @@ void Pump::send()
     getConnector(ReceiveFromDir::Left)->push();
 }
 
-char Pump::serialize()
+char Pump::serialize() const
 {
     return 'P';
 }

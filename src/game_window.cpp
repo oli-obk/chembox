@@ -16,6 +16,7 @@
 #include <fstream>
 #include "machine_factory.hpp"
 #include "machines/pump.hpp"
+#include "machines/straight_pipe.hpp"
 
 GameWindow::GameWindow()
 :Gosu::Window(1200, 800, false)
@@ -29,6 +30,7 @@ GameWindow::GameWindow()
 	Toolbox.reset(0, 0, new Pipe(graphics(), ReceiveFromDir::Up, 4));
 	Toolbox.reset(1, 0, new EndPipe(graphics(), ReceiveFromDir::Down));
 	Toolbox.reset(0, 1, new Pump(graphics()));
+    Toolbox.reset(1, 1, new StraightPipe(graphics(), ReceiveFromDir::Up));
 	
 	render_speed = 0;
 }
@@ -280,6 +282,7 @@ void GameWindow::load(std::string filename)
     factory.add<Pipe>(graphics());
     factory.add<EndPipe>(graphics());
     factory.add<Pump>(graphics());
+    factory.add<StraightPipe>(graphics());
     grid.resize(wdt, data.size());
     for (size_t y = 0; y < data.size(); y++) {
         for (size_t x = 0; x < wdt; x++) {

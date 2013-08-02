@@ -129,7 +129,12 @@ void Pipe::send()
 void Pipe::draw(double x, double y)
 {
     RotatableVersionedMachine::draw(x, y);
-    size_t count = particles.count();
+    size_t count = particles.count()
+        + flowing_particles[0].count()
+        + flowing_particles[1].count()
+        + flowing_particles[2].count()
+        + flowing_particles[3].count()
+        ;
     
     if (count != 0) {
         std::wstringstream wss;
@@ -166,7 +171,7 @@ void Pipe::draw(double x, double y)
 	}
 }
 
-char Pipe::serialize()
+char Pipe::serialize() const
 {
     switch (get_version()) {
         case 0:
