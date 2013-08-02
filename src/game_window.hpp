@@ -24,7 +24,7 @@ private:
 	static constexpr double toolboxx = 800;
 	static constexpr double toolboxy = 20;
 	static constexpr double toolboxwdt = 200;
-	static constexpr double toolboxhgt = 200;
+	static constexpr double toolboxhgt = 300;
 public:
 protected:
     Gosu::Font font;

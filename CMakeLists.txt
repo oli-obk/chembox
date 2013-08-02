@@ -22,6 +22,8 @@ SET(SRC_FILES
 	src/machines/pipe.hpp
     src/machines/straight_pipe.cpp
     src/machines/straight_pipe.hpp
+    src/machines/turn_pipe.cpp
+    src/machines/turn_pipe.hpp
 	src/machines/pump.cpp
 	src/machines/pump.hpp
 	src/machines/end_pipe.cpp

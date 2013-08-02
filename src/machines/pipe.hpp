@@ -28,7 +28,7 @@ public:
 	size_t numActions() const;
 	void Action(size_t id);
     char serialize() const;
-    static const std::string deserializes() { return R"(L7/\+><v^)"; }
+    static const std::string deserializes() { return R"(+><v^)"; }
 };
 
 #endif // PIPE_HPP
