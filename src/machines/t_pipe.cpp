@@ -12,7 +12,7 @@ TPipe::TPipe(Gosu::Graphics& g, ReceiveFromDir dir)
     createConnector(ReceiveFromDir::Up);
     createConnector(ReceiveFromDir::Right);
     if (!m_pImg) {
-        m_pImg.reset(new Gosu::Image(g, L"t_pipe.png"));
+        m_pImg.reset(new Gosu::Image(g, L"t_pipe.png", true));
         s_pImg = m_pImg;
     }
 }

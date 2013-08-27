@@ -10,7 +10,7 @@ StraightPipe::StraightPipe(Gosu::Graphics& g, ReceiveFromDir dir)
     createConnector(ReceiveFromDir::Up);
     createConnector(ReceiveFromDir::Down);
     if (!m_pImg) {
-        m_pImg.reset(new Gosu::Image(g, L"straight_pipe.png"));
+        m_pImg.reset(new Gosu::Image(g, L"straight_pipe.png", true));
         s_pImg = m_pImg;
     }
 }
