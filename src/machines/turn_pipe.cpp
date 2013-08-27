@@ -21,16 +21,38 @@ TurnPipe::~TurnPipe()
 
 void TurnPipe::draw(double x, double y)
 {
-    double angles[] = { 0, 90, 180, -90 };
-    m_pImg->drawRot(x+0.5,
-                    y+0.5,
-                    RenderLayer::Machines,
-                    angles[static_cast<int>(get_rotation())],
-                    0.5,
-                    0.5,
-                    1.0/double(m_pImg->width()),
-                    1.0/double(m_pImg->height())
-                    );
+    auto col = Gosu::Color::WHITE;
+    switch (get_rotation()) {
+        case ReceiveFromDir::Down:
+            m_pImg->getData().draw(x+1, y+1, col,
+                                   x, y+1, col,
+                                   x, y, col,
+                                   x+1, y, col,
+                                   RenderLayer::Machines, Gosu::amDefault);
+            break;
+        case ReceiveFromDir::Left:
+            m_pImg->getData().draw(x, y+1, col,
+                                   x, y, col,
+                                   x+1, y, col,
+                                   x+1, y+1, col,
+                                   RenderLayer::Machines, Gosu::amDefault);
+            break;
+        case ReceiveFromDir::Up:
+            m_pImg->getData().draw(x, y, col,
+                                   x+1, y, col,
+                                   x+1, y+1, col,
+                                   x, y+1, col,
+                                   RenderLayer::Machines, Gosu::amDefault);
+            break;
+        case ReceiveFromDir::Right:
+            m_pImg->getData().draw(x+1, y, col,
+                                   x+1, y+1, col,
+                                   x, y+1, col,
+                                   x, y, col,
+                                   RenderLayer::Machines, Gosu::amDefault);
+            break;
+    }
+
 }
 
 void TurnPipe::receive()
