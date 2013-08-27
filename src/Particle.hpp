@@ -34,19 +34,19 @@ public:
     {
         data = std::move(rhs.data);
     }
-    
+
     ParticleMap& operator=(ParticleMap&& rhs)
     {
         assert(data.empty());
         data = std::move(rhs.data);
         return *this;
     }
-    
+
     void swap(ParticleMap& other)
     {
         std::swap(other.data, data);
     }
-    
+
 	ParticleMap() {};
 
 	int count(ParticleState state, ParticleType type) const
@@ -57,7 +57,7 @@ public:
 		if (it2 == it->second.end()) return 0;
 		return it2->second;
 	}
-	
+
 	int count(ParticleType type) const
 	{
 		int ret = 0;
@@ -68,7 +68,7 @@ public:
 		}
 		return ret;
 	}
-	
+
 	int count(ParticleState state) const
 	{
 		auto it = data.find(state);
@@ -79,7 +79,7 @@ public:
 		}
 		return ret;
 	}
-	
+
 	int count() const
 	{
 		int ret = 0;
@@ -90,7 +90,7 @@ public:
 		}
 		return ret;
 	}
-	
+
 	ParticleMap(ParticleState state, ParticleType type, int count)
 	{
 		data[state][type] = count;
@@ -126,7 +126,7 @@ public:
         rhs.data.clear();
 		return *this;
 	}
-    
+
     void negate()
     {
 		for (auto& a:data) {
@@ -198,7 +198,7 @@ inline void intersect(ParticleMap& left, ParticleMap& right, ParticleMap& inters
             if (ra == right.data.end()) continue;
             auto rb = ra->second.find(b.first);
             if (rb == ra->second.end()) continue;
-            
+
             if (b.second == rb->second) {
                 intersection.data[a.first][b.first] += b.second*2;
                 a.second.erase(b.first);
@@ -217,7 +217,7 @@ inline void intersect(ParticleMap& left, ParticleMap& right, ParticleMap& inters
             if (la == left.data.end()) continue;
             auto lb = la->second.find(b.first);
             if (lb == la->second.end()) continue;
-            
+
             if (b.second > lb->second) {
                 int diff = b.second - lb->second;
                 intersection.data[a.first][b.first] += lb->second*2;
