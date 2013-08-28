@@ -2,11 +2,10 @@
 #define TPIPE_HPP
 
 #include "rotatable_machine.hpp" // Base class: RotatableMachine
+#include "imagestore.hpp"
 
-class TPipe : public RotatableMachine
+class TPipe : public RotatableMachine, private ImageStore<TPipe>
 {
-    static std::weak_ptr<Gosu::Image> s_pImg;
-    std::shared_ptr<Gosu::Image> m_pImg;
     ParticleMap particles;
     ParticleMap up, left, right;
     static std::mt19937 engine; // Mersenne twister MT19937

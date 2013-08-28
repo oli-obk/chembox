@@ -1,18 +1,12 @@
 #include "straight_pipe.hpp"
 #include "defines.hpp"
 
-std::weak_ptr<Gosu::Image> StraightPipe::s_pImg;
-
 StraightPipe::StraightPipe(Gosu::Graphics& g, ReceiveFromDir dir)
 :RotatableMachine(g, dir)
-,m_pImg(s_pImg.lock())
+,ImageStore(g, L"straight_pipe.png", true)
 {
     createConnector(ReceiveFromDir::Up);
     createConnector(ReceiveFromDir::Down);
-    if (!m_pImg) {
-        m_pImg.reset(new Gosu::Image(g, L"straight_pipe.png", true));
-        s_pImg = m_pImg;
-    }
 }
 
 StraightPipe::~StraightPipe()
@@ -26,7 +20,7 @@ void StraightPipe::draw(double x, double y)
     switch (get_rotation()) {
         case ReceiveFromDir::Up:
         case ReceiveFromDir::Down:
-            m_pImg->getData().draw(x+1, y+1, col,
+            Image().getData().draw(x+1, y+1, col,
                                    x, y+1, col,
                                    x, y, col,
                                    x+1, y, col,
@@ -34,7 +28,7 @@ void StraightPipe::draw(double x, double y)
             break;
         case ReceiveFromDir::Left:
         case ReceiveFromDir::Right:
-            m_pImg->getData().draw(x, y+1, col,
+            Image().getData().draw(x, y+1, col,
                                    x, y, col,
                                    x+1, y, col,
                                    x+1, y+1, col,
@@ -83,7 +77,7 @@ char StraightPipe::serialize() const
 
 StraightPipe::StraightPipe(const StraightPipe& rhs)
 :RotatableMachine(rhs)
-,m_pImg(rhs.m_pImg)
+,ImageStore(rhs)
 {
 }
 

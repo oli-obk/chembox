@@ -14,6 +14,13 @@ private:
 protected:
     const Gosu::Image& Image() const { return *m_pImg; };
 
+    void draw(double x, double y, double z)
+    {
+        m_pImg -> draw(x, y, z,
+                       1.0/m_pImg->width(),
+                       1.0/m_pImg->height());
+    }
+
     ImageStore(Gosu::Graphics& g, const std::wstring filename, bool tileable)
     {
         m_pImg = s_pImg.lock();

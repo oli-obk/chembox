@@ -3,11 +3,12 @@
 
 #include "machine.hpp" // Base class: Machine
 #include "Particle.hpp"
+#include "imagestore.hpp"
 
-class Pump : public Machine
+class PumpSpinner;
+
+class Pump : public Machine, private ImageStore<Pump>, private ImageStore<PumpSpinner>
 {
-    static std::weak_ptr<Gosu::Image> s_pImagePump, s_pImageSpinner;
-    std::shared_ptr<Gosu::Image> m_pImagePump, m_pImageSpinner;
     double rotation;
     ParticleMap particles;
 public:

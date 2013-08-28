@@ -129,7 +129,7 @@ void Pipe::send()
 void Pipe::draw(double x, double y)
 {
 
-    Image().draw(x, y, RenderLayer::Machines, 1.0/Image().width(), 1.0/Image().height());
+    ImageStore::draw(x, y, RenderLayer::Machines);
 
     size_t count = particles.count()
         + flowing_particles[0].count()

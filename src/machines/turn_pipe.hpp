@@ -2,11 +2,10 @@
 #define TURNPIPE_HPP
 
 #include "rotatable_machine.hpp" // Base class: RotatableMachine
+#include "imagestore.hpp"
 
-class TurnPipe : public RotatableMachine
+class TurnPipe : public RotatableMachine, private ImageStore<TurnPipe>
 {
-    static std::weak_ptr<Gosu::Image> s_pImg;
-    std::shared_ptr<Gosu::Image> m_pImg;
     ParticleMap particles;
     ParticleMap up, right;
 public:

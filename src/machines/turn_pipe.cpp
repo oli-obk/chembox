@@ -1,18 +1,12 @@
 #include "turn_pipe.hpp"
 #include "defines.hpp"
 
-std::weak_ptr<Gosu::Image> TurnPipe::s_pImg;
-
 TurnPipe::TurnPipe(Gosu::Graphics& g, ReceiveFromDir dir)
 :RotatableMachine(g, dir)
-,m_pImg(s_pImg.lock())
+,ImageStore(g, L"turn_pipe.png", true)
 {
     createConnector(ReceiveFromDir::Up);
     createConnector(ReceiveFromDir::Right);
-    if (!m_pImg) {
-        m_pImg.reset(new Gosu::Image(g, L"turn_pipe.png", true));
-        s_pImg = m_pImg;
-    }
 }
 
 TurnPipe::~TurnPipe()
@@ -24,28 +18,28 @@ void TurnPipe::draw(double x, double y)
     auto col = Gosu::Color::WHITE;
     switch (get_rotation()) {
         case ReceiveFromDir::Down:
-            m_pImg->getData().draw(x+1, y+1, col,
+            Image().getData().draw(x+1, y+1, col,
                                    x, y+1, col,
                                    x, y, col,
                                    x+1, y, col,
                                    RenderLayer::Machines, Gosu::amDefault);
             break;
         case ReceiveFromDir::Left:
-            m_pImg->getData().draw(x, y+1, col,
+            Image().getData().draw(x, y+1, col,
                                    x, y, col,
                                    x+1, y, col,
                                    x+1, y+1, col,
                                    RenderLayer::Machines, Gosu::amDefault);
             break;
         case ReceiveFromDir::Up:
-            m_pImg->getData().draw(x, y, col,
+            Image().getData().draw(x, y, col,
                                    x+1, y, col,
                                    x+1, y+1, col,
                                    x, y+1, col,
                                    RenderLayer::Machines, Gosu::amDefault);
             break;
         case ReceiveFromDir::Right:
-            m_pImg->getData().draw(x+1, y, col,
+            Image().getData().draw(x+1, y, col,
                                    x+1, y+1, col,
                                    x, y+1, col,
                                    x, y, col,
@@ -97,7 +91,7 @@ char TurnPipe::serialize() const
 
 TurnPipe::TurnPipe(const TurnPipe& rhs)
 :RotatableMachine(rhs)
-,m_pImg(rhs.m_pImg)
+,ImageStore(rhs)
 {
 }
 

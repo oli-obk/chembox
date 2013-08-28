@@ -2,11 +2,10 @@
 #define STRAIGHTPIPE_HPP
 
 #include "rotatable_machine.hpp" // Base class: RotatableMachine
+#include "imagestore.hpp"
 
-class StraightPipe : public RotatableMachine
+class StraightPipe : public RotatableMachine, private ImageStore<StraightPipe>
 {
-    static std::weak_ptr<Gosu::Image> s_pImg;
-    std::shared_ptr<Gosu::Image> m_pImg;
     ParticleMap particles;
     ParticleMap up, down;
 public:
