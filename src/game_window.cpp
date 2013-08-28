@@ -29,7 +29,7 @@ GameWindow::GameWindow()
 {
 	load("autosave.grid");
 
-	Toolbox.reset(0, 0, new Pipe(graphics(), ReceiveFromDir::Up, 4));
+	Toolbox.reset(0, 0, new Pipe(graphics()));
 	Toolbox.reset(1, 0, new EndPipe(graphics(), ReceiveFromDir::Down));
 	Toolbox.reset(0, 1, new Pump(graphics()));
     Toolbox.reset(1, 1, new StraightPipe(graphics(), ReceiveFromDir::Up));

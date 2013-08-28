@@ -12,13 +12,7 @@ Pipe::~Pipe()
 void Pipe::Action(size_t id)
 {
 	switch (id) {
-		case 0:
-            set_rotation(get_rotation() + 1);
-		break;
-		case 1:
-			set_version(get_version()+1);
-		break;
-        case 2:
+        case 0:
             particles.add(ParticleState::Gas, ParticleType::Hydrogen, 10);
         break;
 		default:
@@ -29,8 +23,9 @@ void Pipe::Action(size_t id)
 std::weak_ptr<Gosu::Font> Pipe::s_pFont;
 std::mt19937 Pipe::engine;
 
-Pipe::Pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
-:RotatableVersionedMachine(g, dir, version, L"pipe")
+Pipe::Pipe(Gosu::Graphics& g)
+:Machine(g)
+,ImageStore(g, L"pipe4.png", true)
 ,m_pFont(s_pFont.lock())
 {
     particles_to_render.fill(0);
@@ -39,10 +34,15 @@ Pipe::Pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
 		m_pFont.reset(new Gosu::Font(g, Gosu::defaultFontName(), 10));
 		s_pFont = m_pFont;
     }
+    createConnector(ReceiveFromDir::Left);
+    createConnector(ReceiveFromDir::Up);
+    createConnector(ReceiveFromDir::Right);
+    createConnector(ReceiveFromDir::Down);
 }
 
 Pipe::Pipe(const Pipe& rhs)
-:RotatableVersionedMachine(rhs)
+:Machine(rhs)
+,ImageStore(rhs)
 ,m_pFont(rhs.m_pFont)
 {
     particles_to_render.fill(0);
@@ -51,7 +51,7 @@ Pipe::Pipe(const Pipe& rhs)
 
 size_t Pipe::numActions() const
 {
-    return 3;
+    return 1;
 }
 
 void Pipe::receive()
@@ -128,7 +128,9 @@ void Pipe::send()
 
 void Pipe::draw(double x, double y)
 {
-    RotatableVersionedMachine::draw(x, y);
+
+    Image().draw(x, y, RenderLayer::Machines, 1.0/Image().width(), 1.0/Image().height());
+
     size_t count = particles.count()
         + flowing_particles[0].count()
         + flowing_particles[1].count()
@@ -141,19 +143,26 @@ void Pipe::draw(double x, double y)
         wss << count;
         m_pFont->drawRel(wss.str(), x + 0.5, y + 0.5, RenderLayer::Particles+1, 0.5, 0.4, 0.05, 0.05, Gosu::Color::RED);
     }
-    
-    for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
-        const auto a = particles_to_render_interpolated[int(dir)];
+
+    struct {double x, y; ReceiveFromDir dir;} items[] = {
+        {-1, 0, ReceiveFromDir::Left},
+        {1,  0, ReceiveFromDir::Right},
+        {0, -1, ReceiveFromDir::Up},
+        {0,  1, ReceiveFromDir::Down},
+        };
+
+    for (auto item : items) {
+        const auto a = particles_to_render_interpolated[int(item.dir)];
         // epsilon = 0.1, only draw outgoing particles
         if (a <= 0.1) continue;
         // sparse particles
         if (Gosu::random(0, 100) > 10) continue;
         Particle p;
-        p.x = x + 0.5 + Gosu::random(-0.1, 0.1)*getYDir(dir);
-        p.y = y + 0.5 + Gosu::random(-0.1, 0.1)*getXDir(dir);
+        p.x = x + 0.5 + Gosu::random(-0.1, 0.1)*item.y;
+        p.y = y + 0.5 + Gosu::random(-0.1, 0.1)*item.x;
         double vel = 0.05;
-        p.velocity_x = vel*getXDir(dir);
-        p.velocity_y = vel*getYDir(dir);
+        p.velocity_x = vel*item.x;
+        p.velocity_y = vel*item.y;
         p.time_to_live = 1.0/vel;
         p.center_x = 0.5;
         p.center_y = 0.5;
@@ -173,98 +182,11 @@ void Pipe::draw(double x, double y)
 
 char Pipe::serialize() const
 {
-    switch (get_version()) {
-        case 0:
-            return 'X'; // this is more of an end pipe tbh
-        case 1:
-            switch (get_rotation()) {
-                case ReceiveFromDir::Up:
-                    return 'L';
-                break;
-                case ReceiveFromDir::Right:
-                    return '/';
-                break;
-                case ReceiveFromDir::Down:
-                    return '7';
-                break;
-                case ReceiveFromDir::Left:
-                    return '\\';
-                break;
-            }
-        case 2:
-            if (get_rotation() == ReceiveFromDir::Up || get_rotation() == ReceiveFromDir::Down) {
-                return '|';
-            } else {
-                return '-';
-            }
-        case 3:
-            switch (get_rotation()) {
-                case ReceiveFromDir::Up:
-                    return '>';
-                break;
-                case ReceiveFromDir::Right:
-                    return 'v';
-                break;
-                case ReceiveFromDir::Down:
-                    return '<';
-                break;
-                case ReceiveFromDir::Left:
-                    return '^';
-                break;
-            }
-        case 4:
-            return '+';
-    }
-    return 0;
+    return '+';
 }
 
-ReceiveFromDir get_serialization_rotation(char c)
+Pipe::Pipe(char, Gosu::Graphics& g)
+:Pipe(g)
 {
-    switch (c) {
-        case '+':
-        case '|':
-        case '>':
-        case 'L':
-            return ReceiveFromDir::Up;
-        case '-':
-        case 'v':
-        case '/':
-            return ReceiveFromDir::Right;
-        case '<':
-        case '7':
-            return ReceiveFromDir::Down;
-        case '^':
-        case '\\':
-            return ReceiveFromDir::Left;
-        default:
-        throw std::runtime_error("Pipe got an invalid char to deserialize rotation from");
-    }
 }
 
-size_t get_serialization_version(char c)
-{
-    switch (c) {
-        case 'L':
-        case '/':
-        case '\\':
-        case '7':
-            return 1;
-        case '|':
-        case '-':
-            return 2;
-        case '<':
-        case 'v':
-        case '^':
-        case '>':
-            return 3;
-        case '+':
-            return 4;
-        default:
-        throw std::runtime_error("Pipe got an invalid char to deserialize version from");
-    }
-}
-
-Pipe::Pipe(char c, Gosu::Graphics& g)
-:Pipe(g, get_serialization_rotation(c), get_serialization_version(c))
-{
-}

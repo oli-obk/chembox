@@ -34,6 +34,8 @@ SET(SRC_FILES
     src/Effects.hpp
     src/Effects.cpp
 
+    src/imagestore.hpp
+
     lib/GosuParticleEngine/src/fast_math.cpp
     lib/GosuParticleEngine/src/fast_math.hpp
 

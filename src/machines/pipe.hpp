@@ -1,10 +1,11 @@
 #ifndef PIPE_HPP
 #define PIPE_HPP
 
-#include "rotatable_versioned_machine.hpp" // Base class: RotatableVersionedMachine
+#include "machine.hpp" // Base class: RotatableVersionedMachine
 #include "Particle.hpp"
+#include "imagestore.hpp"
 
-class Pipe : public RotatableVersionedMachine
+class Pipe : public Machine, private ImageStore<Pipe>
 {
 private:
 	Pipe(const Pipe& rhs);
@@ -16,7 +17,7 @@ private:
     std::array<double, 4> particles_to_render;
     std::array<double, 4> particles_to_render_interpolated;
 public:
-	Pipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version = 0);
+	Pipe(Gosu::Graphics& g);
     Pipe(char c, Gosu::Graphics& g);
 	virtual ~Pipe();
 
