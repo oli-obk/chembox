@@ -10,7 +10,6 @@ class RotatableVersionedMachine : public RotatableMachine
 	std::array<std::shared_ptr<Gosu::Image>, 6> m_pImage;
 protected:
     RotatableVersionedMachine(Gosu::Graphics& g, ReceiveFromDir rot, size_t version, const wchar_t* basename);
-    RotatableVersionedMachine(const RotatableVersionedMachine& rhs);
     virtual ~RotatableVersionedMachine() {}
     virtual void draw(double x, double y);
 public:

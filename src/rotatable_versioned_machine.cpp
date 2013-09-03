@@ -75,15 +75,6 @@ size_t RotatableVersionedMachine::get_version() const
     return version;
 }
 
-RotatableVersionedMachine::RotatableVersionedMachine(const RotatableVersionedMachine& rhs)
-:RotatableMachine(rhs)
-{
-	for (int i:{0, 1, 2, 3, 4, 5}) {
-		m_pImage[i] = rhs.m_pImage[i];
-	}
-    set_version(rhs.get_version());
-}
-
 void RotatableVersionedMachine::draw(double x, double y)
 {
 	double angles[] = { 0, 90, 180, -90 };

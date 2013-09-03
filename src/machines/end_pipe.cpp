@@ -2,7 +2,7 @@
 #include "defines.hpp"
 
 EndPipe::EndPipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
-:RotatableVersionedMachine(g, dir, version, L"end_pipe")
+:ClonableMachine(g, dir, version, L"end_pipe")
 {
 }
 
@@ -29,7 +29,7 @@ void EndPipe::receive()
 }
 
 EndPipe::EndPipe(const EndPipe& rhs)
-:RotatableVersionedMachine(rhs)
+:ClonableMachine(rhs)
 {
 }
 

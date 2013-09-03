@@ -2,7 +2,7 @@
 #include "defines.hpp"
 
 TurnPipe::TurnPipe(Gosu::Graphics& g, ReceiveFromDir dir)
-:RotatableMachine(g, dir)
+:ClonableMachine(g, dir)
 ,ImageStore(g, L"turn_pipe.png", true)
 {
     createConnector(ReceiveFromDir::Up);
@@ -68,11 +68,6 @@ void TurnPipe::send()
     particles = std::move(split[2]);
 }
 
-std::unique_ptr<Machine> TurnPipe::clone() const
-{
-    return std::unique_ptr<Machine>(new TurnPipe(*this));
-}
-
 char TurnPipe::serialize() const
 {
     switch (get_rotation())
@@ -90,7 +85,7 @@ char TurnPipe::serialize() const
 }
 
 TurnPipe::TurnPipe(const TurnPipe& rhs)
-:RotatableMachine(rhs)
+:ClonableMachine(rhs)
 ,ImageStore(rhs)
 {
 }

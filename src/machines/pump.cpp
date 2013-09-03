@@ -4,8 +4,7 @@
 #include <Gosu/Image.hpp>
 
 Pump::Pump(Gosu::Graphics& g)
-:Machine(g)
-,ImageStore<Pump>(g, L"pump.png", true)
+:ImageStore<Pump>(g, L"pump.png", true)
 ,ImageStore<PumpSpinner>(g, L"pump_spinner.png", false)
 {
     createConnector(ReceiveFromDir::Left);
@@ -45,16 +44,9 @@ char Pump::serialize() const
     return 'P';
 }
 
-void Pump::Initialize(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right)
-{
-    Machine::Initialize(up, down, left, right);
-}
-
 Pump::Pump(const Pump& rhs)
-:Machine(rhs)
+:ClonableMachine(rhs)
 ,ImageStore<Pump>(rhs)
 ,ImageStore<PumpSpinner>(rhs)
 {
-    createConnector(ReceiveFromDir::Left);
-    createConnector(ReceiveFromDir::Up);
 }

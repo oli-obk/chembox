@@ -1,9 +1,8 @@
 #include "machine.hpp"
 
-std::weak_ptr<Effects> Machine::s_pEffects;
+std::weak_ptr<Effects> SharedEffects::s_pEffects;
 
-Machine::Machine(Gosu::Graphics& g)
-:pEffects(effects(g))
+Machine::Machine()
 {
 	m_destroyed = true;
 	m_initialized = false;
@@ -20,11 +19,9 @@ Machine::~Machine()
 {
 }
 
-Machine::Machine(const Machine& m)
-:pEffects(m.pEffects)
+Machine::Machine(const Machine&)
+:Machine()
 {
-	m_destroyed = true;
-	m_initialized = false;
 }
 
 void Machine::communicate()
@@ -85,7 +82,8 @@ void Machine::destroyConnectors()
 	}
 }
 
-std::shared_ptr<Effects> Machine::effects(Gosu::Graphics& g)
+
+std::shared_ptr<Effects> SharedEffects::effects(Gosu::Graphics& g)
 {
     std::shared_ptr<Effects> ret(s_pEffects.lock());
     if (!ret) {
@@ -93,4 +91,9 @@ std::shared_ptr<Effects> Machine::effects(Gosu::Graphics& g)
         s_pEffects = ret;
     }
     return ret;
+}
+
+SharedEffects::SharedEffects(Gosu::Graphics& g)
+:pEffects(effects(g))
+{
 }

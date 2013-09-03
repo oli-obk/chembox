@@ -2,7 +2,7 @@
 #include "defines.hpp"
 
 StraightPipe::StraightPipe(Gosu::Graphics& g, ReceiveFromDir dir)
-:RotatableMachine(g, dir)
+:ClonableMachine(g, dir)
 ,ImageStore(g, L"straight_pipe.png", true)
 {
     createConnector(ReceiveFromDir::Up);
@@ -56,11 +56,6 @@ void StraightPipe::send()
     particles = std::move(split[2]);
 }
 
-std::unique_ptr<Machine> StraightPipe::clone() const
-{
-    return std::unique_ptr<Machine>(new StraightPipe(*this));
-}
-
 char StraightPipe::serialize() const
 {
     switch (get_rotation())
@@ -76,7 +71,7 @@ char StraightPipe::serialize() const
 }
 
 StraightPipe::StraightPipe(const StraightPipe& rhs)
-:RotatableMachine(rhs)
+:ClonableMachine(rhs)
 ,ImageStore(rhs)
 {
 }

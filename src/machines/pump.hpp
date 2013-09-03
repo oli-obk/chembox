@@ -7,7 +7,7 @@
 
 class PumpSpinner;
 
-class Pump : public Machine, private ImageStore<Pump>, private ImageStore<PumpSpinner>
+class Pump : public ClonableMachine<Pump>, private ImageStore<Pump>, private ImageStore<PumpSpinner>
 {
     double rotation;
     ParticleMap particles;
@@ -18,8 +18,6 @@ public:
     virtual ~Pump();
 
 public:
-	virtual void Initialize(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right);
-    virtual std::unique_ptr<Machine> clone() const { return std::unique_ptr<Machine>(new Pump(*this)); }
     virtual void draw(double x, double y);
     virtual void receive();
     virtual void send();

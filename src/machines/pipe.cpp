@@ -24,8 +24,8 @@ std::weak_ptr<Gosu::Font> Pipe::s_pFont;
 std::mt19937 Pipe::engine;
 
 Pipe::Pipe(Gosu::Graphics& g)
-:Machine(g)
-,ImageStore(g, L"pipe4.png", true)
+:ImageStore(g, L"pipe4.png", true)
+,SharedEffects(g)
 ,m_pFont(s_pFont.lock())
 {
     particles_to_render.fill(0);
@@ -41,8 +41,9 @@ Pipe::Pipe(Gosu::Graphics& g)
 }
 
 Pipe::Pipe(const Pipe& rhs)
-:Machine(rhs)
+:ClonableMachine(rhs)
 ,ImageStore(rhs)
+,SharedEffects(rhs)
 ,m_pFont(rhs.m_pFont)
 {
     particles_to_render.fill(0);

@@ -25,7 +25,7 @@ GameWindow::GameWindow()
 ,font(graphics(), Gosu::defaultFontName(), 20)
 ,grid(graphics(), 16, 16)
 ,Toolbox(graphics(), 2, 3)
-,effects(Machine::effects(graphics()))
+,effects(SharedEffects::effects(graphics()))
 {
 	load("autosave.grid");
 

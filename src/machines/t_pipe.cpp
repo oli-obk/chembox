@@ -4,7 +4,7 @@
 std::mt19937 TPipe::engine;
 
 TPipe::TPipe(Gosu::Graphics& g, ReceiveFromDir dir)
-:RotatableMachine(g, dir)
+:ClonableMachine(g, dir)
 ,ImageStore(g, L"t_pipe.png", true)
 {
     createConnector(ReceiveFromDir::Left);
@@ -83,11 +83,6 @@ void TPipe::send()
     particles = std::move(split[3]);
 }
 
-std::unique_ptr<Machine> TPipe::clone() const
-{
-    return std::unique_ptr<Machine>(new TPipe(*this));
-}
-
 char TPipe::serialize() const
 {
     switch (get_rotation())
@@ -105,7 +100,7 @@ char TPipe::serialize() const
 }
 
 TPipe::TPipe(const TPipe& rhs)
-:RotatableMachine(rhs)
+:ClonableMachine(rhs)
 ,ImageStore(rhs)
 {
 }

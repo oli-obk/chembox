@@ -8,7 +8,6 @@ class RotatableMachine : public Machine
     ReceiveFromDir rotation;
 protected:
     RotatableMachine(Gosu::Graphics& g, ReceiveFromDir dir);
-    RotatableMachine(const RotatableMachine& rhs);
 
     void set_rotation(ReceiveFromDir rot);
     ReceiveFromDir get_rotation() const;

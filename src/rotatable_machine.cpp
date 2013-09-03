@@ -1,8 +1,7 @@
 #include "rotatable_machine.hpp"
 
 RotatableMachine::RotatableMachine(Gosu::Graphics& g, ReceiveFromDir dir)
-:Machine(g)
-,rotation(ReceiveFromDir::Up)
+:rotation(ReceiveFromDir::Up)
 {
     set_rotation(dir);
 }
@@ -45,12 +44,6 @@ optional<Connector&> RotatableMachine::getConnector(ReceiveFromDir dir)
 optional<const Connector&> RotatableMachine::getConnector(ReceiveFromDir dir) const
 {
     return Machine::getConnector(dir + rotation);
-}
-
-RotatableMachine::RotatableMachine(const RotatableMachine& rhs)
-:Machine(rhs)
-,rotation(rhs.rotation)
-{
 }
 
 ReceiveFromDir RotatableMachine::get_rotation() const

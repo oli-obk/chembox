@@ -105,6 +105,7 @@ private:
 	void ReInitialize() { m_initialized = false; }
 protected:
 	Machine(const Machine& rhs);
+	Machine();
 	void createConnector(ReceiveFromDir dir);
 	void destroyConnector(ReceiveFromDir dir);
 	void destroyConnectors();
@@ -129,14 +130,31 @@ public:
     static constexpr const char* deserializes();
 
 	void communicate();
-protected:
+public:
+	virtual ~Machine();
+};
+
+class SharedEffects
+{
+private:
     static std::weak_ptr<Effects> s_pEffects;
     std::shared_ptr<Effects> pEffects;
-	Machine(Gosu::Graphics& g);
-public:
+protected:
+	SharedEffects(Gosu::Graphics& g);
     Effects& effects() { return *pEffects; };
+public:
     static std::shared_ptr<Effects> effects(Gosu::Graphics& g);
-	virtual ~Machine();
+};
+
+template<typename Derived, typename Base = Machine>
+class ClonableMachine : public Base
+{
+    using Base::Base;
+public:
+    constexpr std::unique_ptr<Machine> clone() const
+    {
+        return std::unique_ptr<Machine>(new Derived(static_cast<const Derived&>(*this)));
+    }
 };
 
 #endif // MACHINE_HPP

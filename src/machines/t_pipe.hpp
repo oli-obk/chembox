@@ -4,7 +4,9 @@
 #include "rotatable_machine.hpp" // Base class: RotatableMachine
 #include "imagestore.hpp"
 
-class TPipe : public RotatableMachine, private ImageStore<TPipe>
+class TPipe
+:public ClonableMachine<TPipe, RotatableMachine>
+,private ImageStore<TPipe>
 {
     ParticleMap particles;
     ParticleMap up, left, right;
@@ -17,7 +19,6 @@ public:
     void receive();
     void draw(double x, double y);
     ~TPipe();
-    std::unique_ptr<Machine> clone() const;
     char serialize() const;
     static std::string deserializes() { return "^<>v"; }
 
