@@ -18,7 +18,7 @@ public:
     virtual ~Pump();
 
 public:
-    virtual void draw(double x, double y);
+    virtual void draw(double x, double y, double z, double w, double h);
     virtual void receive();
     virtual void send();
     virtual char serialize() const;

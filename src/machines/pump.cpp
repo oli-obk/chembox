@@ -15,14 +15,14 @@ Pump::~Pump()
 {
 }
 
-void Pump::draw(double x, double y)
+void Pump::draw(double x, double y, double z, double w, double h)
 {
-    ImageStore<Pump>::draw(x, y, RenderLayer::Machines);
-    ImageStore<PumpSpinner>::Image().drawRot(x+ 0.5, y + 0.5, RenderLayer::Machines+1,
+    ImageStore<Pump>::draw(x, y, z, w, h);
+    ImageStore<PumpSpinner>::Image().drawRot(x + w*0.5, y + h*0.5, RenderLayer::Machines+1,
                                 rotation,
                                 0.5, 0.5,
-                                0.5/double(ImageStore<PumpSpinner>::Image().width()),
-                                0.5/double(ImageStore<PumpSpinner>::Image().height())
+                                w*0.5/double(ImageStore<PumpSpinner>::Image().width()),
+                                h*0.5/double(ImageStore<PumpSpinner>::Image().height())
                                 );
 }
 

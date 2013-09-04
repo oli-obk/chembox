@@ -24,7 +24,7 @@ public:
 public:
 	virtual void send();
 	virtual void receive();
-    virtual void draw(double x, double y);
+    virtual void draw(double x, double y, double z, double w, double h);
 	size_t numActions() const;
 	void Action(size_t id);
     char serialize() const;

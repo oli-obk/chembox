@@ -116,7 +116,7 @@ public:
 	bool isInitialized() const { return m_initialized; }
 	void Destroy() { assert(!m_destroyed); m_destroyed = true; }
 	bool isDestroyed() const { return m_destroyed; }
-	virtual void draw(double x, double y) = 0;
+	virtual void draw(double x, double y, double z, double w = 1.0, double h = 1.0) = 0;
     // push your particles to the connectors in this function
 	virtual void send() = 0;
     // pop your particles from the connectors in this function

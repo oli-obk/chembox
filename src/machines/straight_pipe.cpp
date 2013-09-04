@@ -2,7 +2,7 @@
 #include "defines.hpp"
 
 StraightPipe::StraightPipe(Gosu::Graphics& g, ReceiveFromDir dir)
-:ClonableMachine(g, dir)
+:ClonableMachine(dir)
 ,ImageStore(g, L"straight_pipe.png", true)
 {
     createConnector(ReceiveFromDir::Up);
@@ -13,26 +13,26 @@ StraightPipe::~StraightPipe()
 {
 }
 
-void StraightPipe::draw(double x, double y)
+void StraightPipe::draw(double x, double y, double z, double w, double h)
 {
 
     auto col = Gosu::Color::WHITE;
     switch (get_rotation()) {
         case ReceiveFromDir::Up:
         case ReceiveFromDir::Down:
-            Image().getData().draw(x+1, y+1, col,
-                                   x, y+1, col,
+            Image().getData().draw(x+w, y+h, col,
+                                   x, y+h, col,
                                    x, y, col,
-                                   x+1, y, col,
-                                   RenderLayer::Machines, Gosu::amDefault);
+                                   x+w, y, col,
+                                   z, Gosu::amDefault);
             break;
         case ReceiveFromDir::Left:
         case ReceiveFromDir::Right:
-            Image().getData().draw(x, y+1, col,
+            Image().getData().draw(x, y+h, col,
                                    x, y, col,
-                                   x+1, y, col,
-                                   x+1, y+1, col,
-                                   RenderLayer::Machines, Gosu::amDefault);
+                                   x+w, y, col,
+                                   x+w, y+h, col,
+                                   z, Gosu::amDefault);
             break;
     }
 }

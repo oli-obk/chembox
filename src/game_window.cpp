@@ -165,24 +165,21 @@ void GameWindow::draw()
 							RenderLayer::GUI
 			);
 	}
-	graphics().pushTransform(Gosu::translate(gridx, gridy));
-	graphics().pushTransform(Gosu::scale(gridwdt/double(grid.width()), gridhgt/double(grid.height())));
     effects->setTransform(gridx, gridy);
     effects->setScale(gridwdt/double(grid.width()), gridhgt/double(grid.height()));
-	grid.draw();
+	grid.draw(gridx, gridy, RenderLayer::Machines, gridwdt, gridhgt);
     effects->draw();
-	graphics().popTransform();
-	graphics().popTransform();
-	graphics().pushTransform(Gosu::translate(toolboxx, toolboxy));
-	graphics().pushTransform(Gosu::scale(toolboxwdt/double(Toolbox.width()), toolboxhgt/double(Toolbox.height())));
-	Toolbox.draw();
-	graphics().popTransform();
-	graphics().popTransform();
+
+	Toolbox.draw(toolboxx, toolboxy, RenderLayer::Machines, toolboxwdt, toolboxhgt);
 
 	if (dragdrop) {
-		graphics().pushTransform(Gosu::scale(gridwdt/double(grid.width()), gridhgt/double(grid.height())));
-		dragdrop->draw(input().mouseX() - gridwdt/double(grid.width())/2, input().mouseY()- gridhgt/double(grid.height())/2);
-		graphics().popTransform();
+        dragdrop->draw(
+            input().mouseX() - gridwdt/double(grid.width())/2,
+            input().mouseY() - gridhgt/double(grid.height())/2,
+            RenderLayer::GUI,
+            gridwdt/double(grid.width()),
+            gridhgt/double(grid.height())
+            );
 	}
 }
 

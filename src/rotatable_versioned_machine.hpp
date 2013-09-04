@@ -11,7 +11,7 @@ class RotatableVersionedMachine : public RotatableMachine
 protected:
     RotatableVersionedMachine(Gosu::Graphics& g, ReceiveFromDir rot, size_t version, const wchar_t* basename);
     virtual ~RotatableVersionedMachine() {}
-    virtual void draw(double x, double y);
+    virtual void draw(double x, double y, double z, double w, double h);
 public:
     void set_version(size_t version);
     size_t get_version() const;

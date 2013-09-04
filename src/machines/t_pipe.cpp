@@ -4,7 +4,7 @@
 std::mt19937 TPipe::engine;
 
 TPipe::TPipe(Gosu::Graphics& g, ReceiveFromDir dir)
-:ClonableMachine(g, dir)
+:ClonableMachine(dir)
 ,ImageStore(g, L"t_pipe.png", true)
 {
     createConnector(ReceiveFromDir::Left);
@@ -16,37 +16,37 @@ TPipe::~TPipe()
 {
 }
 
-void TPipe::draw(double x, double y)
+void TPipe::draw(double x, double y, double z, double w, double h)
 {
     auto col = Gosu::Color::WHITE;
     switch (get_rotation()) {
         case ReceiveFromDir::Left:
-            Image().getData().draw(x+1, y+1, col,
-                                   x, y+1, col,
+            Image().getData().draw(x+w, y+h, col,
+                                   x, y+h, col,
                                    x, y, col,
-                                   x+1, y, col,
-                                   RenderLayer::Machines, Gosu::amDefault);
+                                   x+w, y, col,
+                                   z, Gosu::amDefault);
             break;
         case ReceiveFromDir::Up:
-            Image().getData().draw(x, y+1, col,
+            Image().getData().draw(x, y+h, col,
                                    x, y, col,
-                                   x+1, y, col,
-                                   x+1, y+1, col,
-                                   RenderLayer::Machines, Gosu::amDefault);
+                                   x+w, y, col,
+                                   x+w, y+h, col,
+                                   z, Gosu::amDefault);
             break;
         case ReceiveFromDir::Right:
             Image().getData().draw(x, y, col,
-                                   x+1, y, col,
-                                   x+1, y+1, col,
-                                   x, y+1, col,
-                                   RenderLayer::Machines, Gosu::amDefault);
+                                   x+w, y, col,
+                                   x+w, y+h, col,
+                                   x, y+h, col,
+                                   z, Gosu::amDefault);
             break;
         case ReceiveFromDir::Down:
-            Image().getData().draw(x+1, y, col,
-                                   x+1, y+1, col,
-                                   x, y+1, col,
+            Image().getData().draw(x+w, y, col,
+                                   x+w, y+h, col,
+                                   x, y+h, col,
                                    x, y, col,
-                                   RenderLayer::Machines, Gosu::amDefault);
+                                   z, Gosu::amDefault);
             break;
     }
 }

@@ -1,6 +1,6 @@
 #include "rotatable_machine.hpp"
 
-RotatableMachine::RotatableMachine(Gosu::Graphics& g, ReceiveFromDir dir)
+RotatableMachine::RotatableMachine(ReceiveFromDir dir)
 :rotation(ReceiveFromDir::Up)
 {
     set_rotation(dir);

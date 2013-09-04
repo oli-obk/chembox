@@ -14,11 +14,14 @@ private:
 protected:
     const Gosu::Image& Image() const { return *m_pImg; };
 
-    void draw(double x, double y, double z)
+    void draw(double x, double y, double z, double w, double h)
     {
-        m_pImg -> draw(x, y, z,
-                       1.0/m_pImg->width(),
-                       1.0/m_pImg->height());
+        Gosu::Color col = Gosu::Color::WHITE;
+        m_pImg -> getData() . draw(x   , y   , col,
+                                   x+w , y   , col,
+                                   x+w , y+h , col,
+                                   x   , y+h , col,
+                                   z, Gosu::amDefault);
     }
 
     ImageStore(Gosu::Graphics& g, const std::wstring filename, bool tileable)

@@ -127,10 +127,10 @@ void Pipe::send()
     particles = std::move(distr[v[i]]);
 }
 
-void Pipe::draw(double x, double y)
+void Pipe::draw(double x, double y, double z, double w, double h)
 {
 
-    ImageStore::draw(x, y, RenderLayer::Machines);
+    ImageStore::draw(x, y, z, w, h);
 
     size_t count = particles.count()
         + flowing_particles[0].count()

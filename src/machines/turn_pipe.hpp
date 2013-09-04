@@ -16,7 +16,7 @@ public:
     TurnPipe(char c, Gosu::Graphics& g);
     void send();
     void receive();
-    void draw(double x, double y);
+    virtual void draw(double x, double y, double z, double w, double h);
     ~TurnPipe();
     char serialize() const;
     static std::string deserializes() { return "/\\7L"; }

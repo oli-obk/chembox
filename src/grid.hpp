@@ -98,12 +98,17 @@ public:
 		}
 	}
 
-	void draw()
+	void draw(double x_, double y_, double z, double w, double h)
 	{
+        double tilew = w/double(width());
+        double tileh = h/double(height());
 		for (size_t y = 0; y < height(); y++) {
 			for (size_t x = 0; x < width(); x++) {
 				if (!element(x, y)) continue;
-				element(x, y) -> draw(x, y);
+				element(x, y) -> draw(  x_ + x*tilew, y_ + y*tileh, z,
+                                        tilew,
+                                        tileh
+                                        );
 			}
 		}
 	}
