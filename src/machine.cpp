@@ -19,9 +19,15 @@ Machine::~Machine()
 {
 }
 
-Machine::Machine(const Machine&)
-:Machine()
+Machine::Machine(const Machine& rhs)
 {
+    m_initialized = false;
+    m_destroyed = true;
+    for (auto dir : {ReceiveFromDir::Left, ReceiveFromDir::Right, ReceiveFromDir::Up, ReceiveFromDir::Down}) {
+        if (rhs.getConnector(dir)) {
+            createConnector(dir);
+        }
+    }
 }
 
 void Machine::communicate()
