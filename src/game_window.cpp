@@ -171,12 +171,35 @@ void GameWindow::draw()
 	Toolbox.draw(toolboxx, toolboxy, RenderLayer::Machines, toolboxwdt, toolboxhgt);
 
 	if (dragdrop) {
+        double x = input().mouseX();
+        double w = gridwdt/double(grid.width());
+        double y = input().mouseY();
+        double h = gridhgt/double(grid.height());
+        static double wobble = 0.6;
+        static double wobble_dir = 0.01;
+        double left = x - w*wobble;
+        double right = x + w*wobble;
+        double top = y - h*wobble;
+        double bottom = y + h*wobble;
+        wobble += wobble_dir;
+        if (wobble > 0.7) {
+            wobble_dir = -0.005;
+        } else if (wobble < 0.55) {
+            wobble_dir = 0.005;
+        }
+
+        graphics().drawQuad(left, top, Gosu::Color::GRAY,
+                            right, top, Gosu::Color::GRAY,
+                            right, bottom, Gosu::Color::GRAY,
+                            left, bottom, Gosu::Color::GRAY,
+                            RenderLayer::GUI-1
+            );
         dragdrop->draw(
-            input().mouseX() - gridwdt/double(grid.width())/2,
-            input().mouseY() - gridhgt/double(grid.height())/2,
+            x-w/2,
+            y-h/2,
             RenderLayer::GUI,
-            gridwdt/double(grid.width()),
-            gridhgt/double(grid.height())
+            w,
+            h
             );
 	}
 }
