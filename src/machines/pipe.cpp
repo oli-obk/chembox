@@ -31,7 +31,7 @@ Pipe::Pipe(Gosu::Graphics& g)
     particles_to_render.fill(0);
     particles_to_render_interpolated.fill(0);
     if (!m_pFont) {
-		m_pFont.reset(new Gosu::Font(g, Gosu::defaultFontName(), 10));
+		m_pFont.reset(new Gosu::Font(g, Gosu::defaultFontName(), 20));
 		s_pFont = m_pFont;
     }
     createConnector(ReceiveFromDir::Left);
@@ -142,7 +142,7 @@ void Pipe::draw(double x, double y, double z, double w, double h)
     if (count != 0) {
         std::wstringstream wss;
         wss << count;
-        m_pFont->drawRel(wss.str(), x + 0.5, y + 0.5, RenderLayer::Particles+1, 0.5, 0.4, 0.05, 0.05, Gosu::Color::RED);
+        m_pFont->drawRel(wss.str(), x + 0.5*w, y + 0.5*h, RenderLayer::Particles+1, 0.5, 0.4, 1.0, 1.0, Gosu::Color::RED);
     }
 
     struct {double x, y; ReceiveFromDir dir;} items[] = {
@@ -159,12 +159,12 @@ void Pipe::draw(double x, double y, double z, double w, double h)
         // sparse particles
         if (Gosu::random(0, 100) > 10) continue;
         Particle p;
-        p.x = x + 0.5 + Gosu::random(-0.1, 0.1)*item.y;
-        p.y = y + 0.5 + Gosu::random(-0.1, 0.1)*item.x;
-        double vel = 0.05;
+        p.x = x + (0.5 + Gosu::random(-0.1, 0.1)*item.y)*h;
+        p.y = y + (0.5 + Gosu::random(-0.1, 0.1)*item.x)*w;
+        double vel = 0.5;
         p.velocity_x = vel*item.x;
         p.velocity_y = vel*item.y;
-        p.time_to_live = 1.0/vel;
+        p.time_to_live = w/vel;
         p.center_x = 0.5;
         p.center_y = 0.5;
         p.scale = log(a+1);

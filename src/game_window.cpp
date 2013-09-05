@@ -165,8 +165,6 @@ void GameWindow::draw()
 							RenderLayer::GUI
 			);
 	}
-    effects->setTransform(gridx, gridy);
-    effects->setScale(gridwdt/double(grid.width()), gridhgt/double(grid.height()));
 	grid.draw(gridx, gridy, RenderLayer::Machines, gridwdt, gridhgt);
     effects->draw();
 
