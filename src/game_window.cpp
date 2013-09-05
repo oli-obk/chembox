@@ -26,6 +26,8 @@ GameWindow::GameWindow()
 ,grid(graphics(), 16, 16)
 ,Toolbox(graphics(), 2, 3)
 ,effects(SharedEffects::effects(graphics()))
+,frame_id(0)
+,render_frame_id(0)
 {
 	load("autosave.grid");
 
@@ -123,6 +125,7 @@ void GameWindow::buttonUp(Gosu::Button btn)
 
 void GameWindow::draw()
 {
+    render_frame_id++;
 	std::wstringstream wss;
 	wss << Gosu::fps();
 	wss << L"fps - ";
@@ -175,18 +178,14 @@ void GameWindow::draw()
         double w = gridwdt/double(grid.width());
         double y = input().mouseY();
         double h = gridhgt/double(grid.height());
-        static double wobble = 0.6;
-        static double wobble_dir = 0.01;
+        double a = double(render_frame_id%30)/30.0;
+        a = a - 0.5;
+        a = std::abs(a);
+        double wobble = 0.55 + a*0.15;
         double left = x - w*wobble;
         double right = x + w*wobble;
         double top = y - h*wobble;
         double bottom = y + h*wobble;
-        wobble += wobble_dir;
-        if (wobble > 0.7) {
-            wobble_dir = -0.005;
-        } else if (wobble < 0.55) {
-            wobble_dir = 0.005;
-        }
 
         graphics().drawQuad(left, top, Gosu::Color::GRAY,
                             right, top, Gosu::Color::GRAY,
@@ -250,6 +249,7 @@ void GameWindow::step()
 {
 	if (grid.check_initialization()) {
 		grid.update();
+		frame_id++;
 	}
 }
 

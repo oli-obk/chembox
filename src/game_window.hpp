@@ -36,6 +36,7 @@ protected:
 	// 0 is paused, positive is how many particle/draw updates happen per logic update, negative is how many logic updates happen per render update
 	int render_speed;
 	int render_speed_steps;
+	int frame_id, render_frame_id;
 public:
 	int getMouseXInGrid() const;
 	int getMouseYInGrid() const;
