@@ -11,6 +11,8 @@ class TPipe
     ParticleMap particles;
     ParticleMap up, left, right;
     static std::mt19937 engine; // Mersenne twister MT19937
+	std::shared_ptr<Gosu::Font> m_pFont;
+	static std::weak_ptr<Gosu::Font> s_pFont;
 public:
     TPipe(const TPipe&);
     TPipe(Gosu::Graphics& g, ReceiveFromDir dir);

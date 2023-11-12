@@ -36,6 +36,12 @@ SET(SRC_FILES
 
     src/imagestore.hpp
 
+    src/pipeparticles.hpp
+    src/pipeparticles.cpp
+
+    src/sharedeffects.hpp
+    src/sharedeffects.cpp
+
     lib/GosuParticleEngine/src/fast_math.cpp
     lib/GosuParticleEngine/src/fast_math.hpp
 
@@ -43,13 +49,14 @@ SET(SRC_FILES
     lib/GosuParticleEngine/src/ParticleEmitter.hpp
     lib/GosuParticleEngine/src/Particle.cpp
     lib/GosuParticleEngine/src/Particle.hpp
+
+	include/optional.hpp
+	include/helpers.hpp
+	src/ConnectorDir.hpp
 	)
 
 #Projects headers files
 SET(INC_FILES
-    src/game_window.hpp
-	include/optional.hpp
-	src/ConnectorDir.hpp
 	)
 INCLUDE_DIRECTORIES(
 include

@@ -1,7 +1,5 @@
 #include "machine.hpp"
 
-std::weak_ptr<Effects> SharedEffects::s_pEffects;
-
 Machine::Machine()
 {
 	m_destroyed = true;
@@ -17,6 +15,14 @@ void Machine::createConnector(ReceiveFromDir dir)
 
 Machine::~Machine()
 {
+}
+
+void Machine::draw(double x, double y, double z, double w, double h)
+{
+    for (auto& con : connectors) {
+        if (!con) continue;
+        con -> draw(x, y, z, w, h);
+    }
 }
 
 Machine::Machine(const Machine& rhs)
@@ -86,20 +92,4 @@ void Machine::destroyConnectors()
 	for (auto& c:connectors) {
 		c.destruct();
 	}
-}
-
-
-std::shared_ptr<Effects> SharedEffects::effects(Gosu::Graphics& g)
-{
-    std::shared_ptr<Effects> ret(s_pEffects.lock());
-    if (!ret) {
-        ret.reset(new Effects(g));
-        s_pEffects = ret;
-    }
-    return ret;
-}
-
-SharedEffects::SharedEffects(Gosu::Graphics& g)
-:pEffects(effects(g))
-{
 }

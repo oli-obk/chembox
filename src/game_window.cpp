@@ -278,6 +278,9 @@ void GameWindow::load(std::string filename)
     std::cout << "loading " << filename << std::endl;
     std::ifstream file(filename);
     std::vector<std::string> data;
+    if (!file) {
+        throw std::runtime_error("could not load grid: file not found");
+    }
     size_t wdt = 0;
     while(file) {
         std::string str;

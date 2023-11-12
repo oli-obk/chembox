@@ -10,6 +10,8 @@ class TurnPipe
 {
     ParticleMap particles;
     ParticleMap up, right;
+	std::shared_ptr<Gosu::Font> m_pFont;
+	static std::weak_ptr<Gosu::Font> s_pFont;
 public:
     TurnPipe(const TurnPipe&);
     TurnPipe(Gosu::Graphics& g, ReceiveFromDir dir);

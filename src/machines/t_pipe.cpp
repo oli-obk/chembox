@@ -1,12 +1,22 @@
 #include "t_pipe.hpp"
 #include "defines.hpp"
+#include <sstream>
+#include <Gosu/Font.hpp>
+#include <Gosu/Text.hpp>
+
+std::weak_ptr<Gosu::Font> TPipe::s_pFont;
 
 std::mt19937 TPipe::engine;
 
 TPipe::TPipe(Gosu::Graphics& g, ReceiveFromDir dir)
 :ClonableMachine(dir)
 ,ImageStore(g, L"t_pipe.png", true)
+,m_pFont(s_pFont.lock())
 {
+    if (!m_pFont) {
+		m_pFont.reset(new Gosu::Font(g, Gosu::defaultFontName(), 20));
+		s_pFont = m_pFont;
+    }
     createConnector(ReceiveFromDir::Left);
     createConnector(ReceiveFromDir::Up);
     createConnector(ReceiveFromDir::Right);
@@ -18,6 +28,17 @@ TPipe::~TPipe()
 
 void TPipe::draw(double x, double y, double z, double w, double h)
 {
+    size_t count = particles.count()
+        + up.count()
+        + left.count()
+        + right.count()
+        ;
+
+    if (count != 0) {
+        std::wstringstream wss;
+        wss << count;
+        m_pFont->drawRel(wss.str(), x + 0.5*w, y + 0.5*h, RenderLayer::Particles+1, 0.5, 0.4, 1.0, 1.0, Gosu::Color::RED);
+    }
     auto col = Gosu::Color::WHITE;
     switch (get_rotation()) {
         case ReceiveFromDir::Left:
@@ -102,6 +123,7 @@ char TPipe::serialize() const
 TPipe::TPipe(const TPipe& rhs)
 :ClonableMachine(rhs)
 ,ImageStore(rhs)
+,m_pFont(rhs.m_pFont)
 {
 }
 

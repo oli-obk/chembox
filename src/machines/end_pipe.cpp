@@ -1,9 +1,18 @@
 #include "end_pipe.hpp"
 #include "defines.hpp"
+#include <Gosu/Font.hpp>
+#include <Gosu/Text.hpp>
+
+std::weak_ptr<Gosu::Font> EndPipe::s_pFont;
 
 EndPipe::EndPipe(Gosu::Graphics& g, ReceiveFromDir dir, size_t version)
 :ClonableMachine(g, dir, version, L"end_pipe")
+,m_pFont(s_pFont.lock())
 {
+    if (!m_pFont) {
+		m_pFont.reset(new Gosu::Font(g, Gosu::defaultFontName(), 20));
+		s_pFont = m_pFont;
+    }
 }
 
 EndPipe::~EndPipe()
@@ -30,6 +39,7 @@ void EndPipe::receive()
 
 EndPipe::EndPipe(const EndPipe& rhs)
 :ClonableMachine(rhs)
+,m_pFont(rhs.m_pFont)
 {
 }
 

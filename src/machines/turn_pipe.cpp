@@ -1,10 +1,20 @@
 #include "turn_pipe.hpp"
 #include "defines.hpp"
+#include <sstream>
+#include <Gosu/Font.hpp>
+#include <Gosu/Text.hpp>
+
+std::weak_ptr<Gosu::Font> TurnPipe::s_pFont;
 
 TurnPipe::TurnPipe(Gosu::Graphics& g, ReceiveFromDir dir)
 :ClonableMachine(dir)
 ,ImageStore(g, L"turn_pipe.png", true)
+,m_pFont(s_pFont.lock())
 {
+    if (!m_pFont) {
+		m_pFont.reset(new Gosu::Font(g, Gosu::defaultFontName(), 20));
+		s_pFont = m_pFont;
+    }
     createConnector(ReceiveFromDir::Up);
     createConnector(ReceiveFromDir::Right);
 }
@@ -15,6 +25,17 @@ TurnPipe::~TurnPipe()
 
 void TurnPipe::draw(double x, double y, double z, double w, double h)
 {
+
+    size_t count = particles.count()
+        + up.count()
+        + right.count()
+        ;
+
+    if (count != 0) {
+        std::wstringstream wss;
+        wss << count;
+        m_pFont->drawRel(wss.str(), x + 0.5*w, y + 0.5*h, RenderLayer::Particles+1, 0.5, 0.4, 1.0, 1.0, Gosu::Color::RED);
+    }
     auto col = Gosu::Color::WHITE;
     switch (get_rotation()) {
         case ReceiveFromDir::Down:
@@ -87,6 +108,7 @@ char TurnPipe::serialize() const
 TurnPipe::TurnPipe(const TurnPipe& rhs)
 :ClonableMachine(rhs)
 ,ImageStore(rhs)
+,m_pFont(rhs.m_pFont)
 {
 }
 

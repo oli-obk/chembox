@@ -10,6 +10,8 @@ class StraightPipe
 {
     ParticleMap particles;
     ParticleMap up, down;
+	std::shared_ptr<Gosu::Font> m_pFont;
+	static std::weak_ptr<Gosu::Font> s_pFont;
 public:
     StraightPipe(const StraightPipe&);
     StraightPipe(Gosu::Graphics& g, ReceiveFromDir dir);

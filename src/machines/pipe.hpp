@@ -4,8 +4,9 @@
 #include "machine.hpp" // Base class: RotatableVersionedMachine
 #include "Particle.hpp"
 #include "imagestore.hpp"
+#include "pipeparticles.hpp"
 
-class Pipe : public ClonableMachine<Pipe>, private ImageStore<Pipe>, private SharedEffects
+class Pipe : public ClonableMachine<Pipe>, private ImageStore<Pipe>, private PipeParticles
 {
 private:
 	std::shared_ptr<Gosu::Font> m_pFont;
@@ -13,8 +14,6 @@ private:
     static std::mt19937 engine; // Mersenne twister MT19937
 	ParticleMap particles;
 	std::array<ParticleMap, 4> flowing_particles;
-    std::array<double, 4> particles_to_render;
-    std::array<double, 4> particles_to_render_interpolated;
 public:
 	Pipe(const Pipe& rhs);
 	Pipe(Gosu::Graphics& g);

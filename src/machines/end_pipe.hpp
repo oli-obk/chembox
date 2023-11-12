@@ -11,6 +11,8 @@ class EndPipe : public ClonableMachine<EndPipe, RotatableVersionedMachine>
 {
 private:
     std::array<ParticleMap, 4> particles;
+	std::shared_ptr<Gosu::Font> m_pFont;
+	static std::weak_ptr<Gosu::Font> s_pFont;
 public:
 	EndPipe(const EndPipe& rhs);
 	virtual void Initialize(optional<Machine&> up, optional<Machine&> down, optional<Machine&> left, optional<Machine&> right);

@@ -25,11 +25,9 @@ std::mt19937 Pipe::engine;
 
 Pipe::Pipe(Gosu::Graphics& g)
 :ImageStore(g, L"pipe4.png", true)
-,SharedEffects(g)
+,PipeParticles(g)
 ,m_pFont(s_pFont.lock())
 {
-    particles_to_render.fill(0);
-    particles_to_render_interpolated.fill(0);
     if (!m_pFont) {
 		m_pFont.reset(new Gosu::Font(g, Gosu::defaultFontName(), 20));
 		s_pFont = m_pFont;
@@ -43,11 +41,9 @@ Pipe::Pipe(Gosu::Graphics& g)
 Pipe::Pipe(const Pipe& rhs)
 :ClonableMachine(rhs)
 ,ImageStore(rhs)
-,SharedEffects(rhs)
+,PipeParticles(rhs)
 ,m_pFont(rhs.m_pFont)
 {
-    particles_to_render.fill(0);
-    particles_to_render_interpolated.fill(0);
 }
 
 size_t Pipe::numActions() const
@@ -62,40 +58,36 @@ void Pipe::receive()
         auto con = getConnector(dir);
         if (!con) continue;
         auto parts = con->pop();
-        
-        particles_to_render[int(dir)] -= parts.count() + flowing_particles[int(dir)].count();
-        
-        if (getConnector(flip(dir))) {
-            auto split = parts.split<2>();
-            size_t v[] = {0, 1, 2, 3, 4};
-            std::shuffle(std::begin(v), v+2, engine);
-            flowing_particles[int(flip(dir))] += std::move(split[v[0]]);
-            particles += std::move(split[v[1]]);
-        } else if(getConnector(dir+1) && getConnector(dir-1)) {
-            auto split = parts.split<3>();
-            size_t v[] = {0, 1, 2, 3, 4};
-            std::shuffle(std::begin(v), v+3, engine);
-            flowing_particles[int(dir+1)] += std::move(split[v[0]]);
-            flowing_particles[int(dir-1)] += std::move(split[v[1]]);
-            particles += std::move(split[v[2]]);
-        } else if(getConnector(dir+1)) {
-            auto split = parts.split<2>();
-            size_t v[] = {0, 1, 2, 3, 4};
-            std::shuffle(std::begin(v), v+2, engine);
-            flowing_particles[int(dir+1)] += std::move(split[v[0]]);
-            particles += std::move(split[v[1]]);
-        } else if(getConnector(dir-1)) {
-            auto split = parts.split<2>();
-            size_t v[] = {0, 1, 2, 3, 4};
-            std::shuffle(std::begin(v), v+2, engine);
-            flowing_particles[int(dir-1)] += std::move(split[v[0]]);
-            particles += std::move(split[v[1]]);
-        } else {
-            particles += std::move(parts);
-        }
-        auto& a = particles_to_render_interpolated[int(dir)];
-        a = Gosu::interpolate(a, particles_to_render[int(dir)], 0.01);
+
+        PipeParticles::at(dir) -= parts.count();
+        PipeParticles::update(dir);
+
+        flowing_particles[int(dir)] = std::move(parts);
     }
+
+	ParticleMap rl;
+	intersect(flowing_particles[int(ReceiveFromDir::Up)],
+                flowing_particles[int(ReceiveFromDir::Down)],
+                rl);
+    std::swap(  flowing_particles[int(ReceiveFromDir::Up)],
+                flowing_particles[int(ReceiveFromDir::Down)]
+                );
+
+    ParticleMap ud;
+	intersect(flowing_particles[int(ReceiveFromDir::Right)],
+                flowing_particles[int(ReceiveFromDir::Left)],
+                ud);
+	std::swap(  flowing_particles[int(ReceiveFromDir::Right)],
+                flowing_particles[int(ReceiveFromDir::Left)]
+                );
+
+    intersect(rl, ud, particles);
+    auto rl_split = rl.split<2>();
+    flowing_particles[int(ReceiveFromDir::Right)] += std::move(rl_split[0]);
+    flowing_particles[int(ReceiveFromDir::Left)] += std::move(rl_split[1]);
+    auto ud_split = ud.split<2>();
+    flowing_particles[int(ReceiveFromDir::Up)] += std::move(ud_split[0]);
+    flowing_particles[int(ReceiveFromDir::Down)] += std::move(ud_split[1]);
 }
 
 void Pipe::send()
@@ -116,11 +108,11 @@ void Pipe::send()
 	for (ReceiveFromDir dir:{ReceiveFromDir::Up, ReceiveFromDir::Down, ReceiveFromDir::Left, ReceiveFromDir::Right}) {
         auto con = getConnector(dir);
         if (!con) {
-            particles_to_render[int(dir)] = 0;
+            PipeParticles::at(dir) = 0;
             continue;
         }
         auto& parts = distr[v[i++]];
-        particles_to_render[int(dir)] = parts.count() + flowing_particles[int(dir)].count();
+        PipeParticles::at(dir) = parts.count() + flowing_particles[int(dir)].count();
         con->push(std::move(parts));
         con->push(std::move(flowing_particles[int(dir)]));
     }
@@ -138,47 +130,14 @@ void Pipe::draw(double x, double y, double z, double w, double h)
         + flowing_particles[2].count()
         + flowing_particles[3].count()
         ;
-    
+
     if (count != 0) {
         std::wstringstream wss;
         wss << count;
         m_pFont->drawRel(wss.str(), x + 0.5*w, y + 0.5*h, RenderLayer::Particles+1, 0.5, 0.4, 1.0, 1.0, Gosu::Color::RED);
     }
 
-    struct {double x, y; ReceiveFromDir dir;} items[] = {
-        {-1, 0, ReceiveFromDir::Left},
-        {1,  0, ReceiveFromDir::Right},
-        {0, -1, ReceiveFromDir::Up},
-        {0,  1, ReceiveFromDir::Down},
-        };
-
-    for (auto item : items) {
-        const auto a = particles_to_render_interpolated[int(item.dir)];
-        // epsilon = 0.1, only draw outgoing particles
-        if (a <= 0.1) continue;
-        // sparse particles
-        if (Gosu::random(0, 100) > 10) continue;
-        Particle p;
-        p.x = x + (0.5 + Gosu::random(-0.1, 0.1)*item.y)*h;
-        p.y = y + (0.5 + Gosu::random(-0.1, 0.1)*item.x)*w;
-        double vel = 0.5;
-        p.velocity_x = vel*item.x;
-        p.velocity_y = vel*item.y;
-        p.time_to_live = w/vel;
-        p.center_x = 0.5;
-        p.center_y = 0.5;
-        p.scale = log(a+1);
-        p.color.alpha = 1.0;
-        p.color.red = 0.0;
-        p.color.blue = 1.0;
-        p.color.green = 0.5;
-        p.friction = 0.0;
-        p.angle = 0.0;
-        p.angular_velocity = 0.0;
-        p.zoom = 0.0;
-        p.fade = 0.2;
-        effects().emit(L"particle_gas.png", p);
-	}
+    PipeParticles::draw(x, y, z, w, h);
 }
 
 char Pipe::serialize() const

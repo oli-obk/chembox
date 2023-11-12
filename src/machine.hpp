@@ -17,7 +17,7 @@ private:
     enum class ConnectorState{
         ReadyToPop, ReadyToPush, Pushing
     };
-	builtin_wrapper<ConnectorState, ConnectorState::ReadyToPush> __state;
+	ConnectorState __state = ConnectorState::ReadyToPush;
 #endif //NDEBUG
 	Connector(const Connector&) = delete;
 	Connector& operator=(const Connector&) = delete;
@@ -35,6 +35,10 @@ public:
 		assert(!other);
 		other.construct(c);
 		c.other.construct(*this);
+	}
+
+	void draw(double x, double y, double z, double w, double h)
+	{
 	}
 
 	void disconnect()
@@ -116,7 +120,7 @@ public:
 	bool isInitialized() const { return m_initialized; }
 	void Destroy() { assert(!m_destroyed); m_destroyed = true; }
 	bool isDestroyed() const { return m_destroyed; }
-	virtual void draw(double x, double y, double z, double w = 1.0, double h = 1.0) = 0;
+	virtual void draw(double x, double y, double z, double w = 1.0, double h = 1.0);
     // push your particles to the connectors in this function
 	virtual void send() = 0;
     // pop your particles from the connectors in this function
@@ -132,18 +136,6 @@ public:
 	void communicate();
 public:
 	virtual ~Machine();
-};
-
-class SharedEffects
-{
-private:
-    static std::weak_ptr<Effects> s_pEffects;
-    std::shared_ptr<Effects> pEffects;
-protected:
-	SharedEffects(Gosu::Graphics& g);
-    Effects& effects() { return *pEffects; };
-public:
-    static std::shared_ptr<Effects> effects(Gosu::Graphics& g);
 };
 
 template<typename Derived, typename Base = Machine>
