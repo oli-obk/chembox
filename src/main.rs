@@ -2,32 +2,7 @@ use bevy::prelude::*;
 use bevy_ecs_tilemap::prelude::*;
 use bevy_pancam::{PanCam, PanCamPlugin};
 
-const PIPES: &[&str] = &[
-    "empty.png",
-    "drain_pipe.png",
-    "drain_pipe0.png",
-    "drain_pipe2.png",
-    "drain_pipe2opposite.png",
-    "drain_pipe3.png",
-    "drain_pipe4.png",
-    "end_pipe.png",
-    "end_pipe0.png",
-    "end_pipe2.png",
-    "end_pipe2opposite.png",
-    "end_pipe3.png",
-    "end_pipe4.png",
-    "pipe.png",
-    "pipe0.png",
-    "pipe2.png",
-    "pipe2opposite.png",
-    "pipe3.png",
-    "pipe4.png",
-    "pump.png",
-    "pump_spinner.png",
-    "straight_pipe.png",
-    "turn_pipe.png",
-    "t_pipe.png",
-];
+mod parser;
 
 fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Query<&Window>) {
     commands.spawn(Camera2dBundle::default()).insert(PanCam {
@@ -38,7 +13,10 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Quer
         ..Default::default()
     });
 
-    let texture_handle = PIPES.iter().map(|&path| asset_server.load(path)).collect();
+    let texture_handle = parser::PIPES
+        .iter()
+        .map(|&path| asset_server.load(path))
+        .collect::<Vec<_>>();
 
     let map_size = TilemapSize { x: 16, y: 16 };
 
@@ -64,7 +42,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Quer
                 .spawn(TileBundle {
                     position: tile_pos,
                     tilemap_id: TilemapId(tilemap_entity),
-                    texture_index: TileTextureIndex((x * map_size.y + y) % PIPES.len() as u32),
+                    texture_index: TileTextureIndex((x * map_size.y + y) % texture_handle.len() as u32),
                     ..Default::default()
                 })
                 .id();
