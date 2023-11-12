@@ -29,7 +29,7 @@ const PIPES: &[&str] = &[
     "t_pipe.png",
 ];
 
-fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
+fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Query<&Window>) {
     commands.spawn(Camera2dBundle::default()).insert(PanCam {
         grab_buttons: vec![MouseButton::Middle], // which buttons should drag the camera
         enabled: true,        // when false, controls are disabled. See toggle example.
@@ -40,7 +40,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
 
     let texture_handle = PIPES.iter().map(|&path| asset_server.load(path)).collect();
 
-    let map_size = TilemapSize { x: 32, y: 32 };
+    let map_size = TilemapSize { x: 16, y: 16 };
 
     // Create a tilemap entity a little early.
     // We want this entity early because we need to tell each tile which tilemap entity
@@ -64,6 +64,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
                 .spawn(TileBundle {
                     position: tile_pos,
                     tilemap_id: TilemapId(tilemap_entity),
+                    texture_index: TileTextureIndex((x * map_size.y + y) % PIPES.len() as u32),
                     ..Default::default()
                 })
                 .id();
@@ -72,17 +73,23 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>) {
     }
 
     let tile_size = TilemapTileSize { x: 500.0, y: 500.0 };
-    let grid_size = tile_size.into();
     let map_type = TilemapType::Square;
 
     commands.entity(tilemap_entity).insert(TilemapBundle {
-        grid_size,
+        grid_size: tile_size.into(),
         map_type,
         size: map_size,
         storage: tile_storage,
         texture: TilemapTexture::Vector(texture_handle),
         tile_size,
-        transform: get_tilemap_center_transform(&map_size, &grid_size, &map_type, 0.0),
+        transform: Transform::from_scale((1.0 / 16.0, 1.0 / 16.0, 1.0).into()).with_translation(
+            (
+                -windows.single().width() / 2.0 + 50.0,
+                -windows.single().height() / 2.0 + 50.0,
+                0.0,
+            )
+                .into(),
+        ),
         ..Default::default()
     });
 }
