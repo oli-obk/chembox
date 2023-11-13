@@ -1,8 +1,11 @@
 use bevy::prelude::*;
 use bevy_ecs_tilemap::prelude::*;
 use bevy_pancam::{PanCam, PanCamPlugin};
+use grid::Grid;
+use spanned::Spanned;
 
-mod parser;
+mod grid;
+mod pipe;
 
 fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Query<&Window>) {
     commands.spawn(Camera2dBundle::default()).insert(PanCam {
@@ -13,12 +16,18 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Quer
         ..Default::default()
     });
 
-    let texture_handle = parser::PIPES
+    let texture_handle = pipe::PIPES
         .iter()
         .map(|&path| asset_server.load(path))
         .collect::<Vec<_>>();
 
-    let map_size = TilemapSize { x: 16, y: 16 };
+    let grid = Spanned::read_from_file("data/test.grid").unwrap();
+    let grid = Grid::parse(grid.lines()).unwrap();
+
+    let map_size = TilemapSize {
+        x: grid.width(),
+        y: grid.height(),
+    };
 
     // Create a tilemap entity a little early.
     // We want this entity early because we need to tell each tile which tilemap entity
@@ -38,11 +47,32 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Quer
     for x in 0..map_size.x {
         for y in 0..map_size.y {
             let tile_pos = TilePos { x, y };
+            let (index, rotation) = grid[(x, y)].index_and_rotation();
+            let flip = match rotation {
+                0 => TileFlip::default(),
+                1 => TileFlip {
+                    x: true,
+                    y: false,
+                    d: true,
+                },
+                2 => TileFlip {
+                    x: true,
+                    y: true,
+                    d: false,
+                },
+                3 => TileFlip {
+                    x: false,
+                    y: true,
+                    d: true,
+                },
+                _ => unreachable!(),
+            };
             let tile_entity = commands
                 .spawn(TileBundle {
                     position: tile_pos,
                     tilemap_id: TilemapId(tilemap_entity),
-                    texture_index: TileTextureIndex((x * map_size.y + y) % texture_handle.len() as u32),
+                    texture_index: TileTextureIndex(index.into()),
+                    flip,
                     ..Default::default()
                 })
                 .id();
