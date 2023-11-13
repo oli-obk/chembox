@@ -12,7 +12,7 @@ impl Index<(u32, u32)> for Grid {
 
     fn index(&self, (x, y): (u32, u32)) -> &Self::Output {
         const DEFAULT: &Element = &Element::Pipe(Pipe::EMPTY);
-        &self.data[self.data.len() - y as usize - 1].get(x as usize).unwrap_or(DEFAULT)
+        self.get((x, y)).unwrap_or(DEFAULT)
     }
 }
 

@@ -47,7 +47,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Quer
     for x in 0..map_size.x {
         for y in 0..map_size.y {
             let tile_pos = TilePos { x, y };
-            let (index, rotation) = grid[(x, y)].index_and_rotation();
+            let (index, rotation) = grid[(x, map_size.y - y - 1)].index_and_rotation();
             let flip = match rotation {
                 0 => TileFlip::default(),
                 1 => TileFlip {
