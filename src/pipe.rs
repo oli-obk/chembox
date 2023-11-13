@@ -16,42 +16,85 @@ pub const PIPES: &[&str] = &[
     "pump.png",
 ];
 
-#[derive(Default)]
+#[derive(Default, Debug)]
 pub struct Pipe {
     // Bitmask of the actual data
     data: u8,
 }
 
+pub enum Rotation {
+    /// 0°
+    Zero,
+    /// 90°
+    Ninety,
+    /// 180°
+    OneEighty,
+    /// 270°
+    TwoSeventy,
+}
+
+#[derive(Clone, Copy)]
+pub enum PipeTile {
+    Empty = 0,
+    One = 1,
+    Turn = 2,
+    Straight = 3,
+    T = 4,
+    All = 5,
+}
+
+impl PipeTile {
+    pub fn index(self, drain: bool) -> u8 {
+        self as u8 + 6 * drain as u8
+    }
+}
+
 impl Pipe {
     pub const EMPTY: Self = Self { data: 0 };
-    pub fn index_and_rotation(&self) -> (u8, u8) {
-        let i = ((self.data & 0b1100_0000) >> 6) * 6;
-        let (j, rot) = match self.data & 0b0000_1111 {
-            0b0000 => (0, 0),
+    pub fn tile_and_rotation(&self) -> (PipeTile, bool, Rotation) {
+        let drain = ((self.data & 0b1100_0000) >> 6) != 0;
+        let (tile, rot) = match self.data & 0b0000_1111 {
+            0b0000 => (PipeTile::Empty, Rotation::Zero),
 
-            0b1000 => (1, 0),
-            0b0100 => (1, 1),
-            0b0010 => (1, 2),
-            0b0001 => (1, 3),
+            0b1000 => (PipeTile::One, Rotation::Zero),
+            0b0100 => (PipeTile::One, Rotation::Ninety),
+            0b0010 => (PipeTile::One, Rotation::OneEighty),
+            0b0001 => (PipeTile::One, Rotation::TwoSeventy),
 
-            0b1100 => (2, 0),
-            0b0110 => (2, 1),
-            0b0011 => (2, 2),
-            0b1001 => (2, 3),
+            0b1100 => (PipeTile::Turn, Rotation::Zero),
+            0b0110 => (PipeTile::Turn, Rotation::Ninety),
+            0b0011 => (PipeTile::Turn, Rotation::OneEighty),
+            0b1001 => (PipeTile::Turn, Rotation::TwoSeventy),
 
-            0b1010 => (3, 0),
-            0b0101 => (3, 1),
+            0b1010 => (PipeTile::Straight, Rotation::Zero),
+            0b0101 => (PipeTile::Straight, Rotation::Ninety),
 
-            0b1110 => (4, 0),
-            0b0111 => (4, 1),
-            0b1011 => (4, 2),
-            0b1101 => (4, 3),
+            0b1110 => (PipeTile::T, Rotation::Zero),
+            0b0111 => (PipeTile::T, Rotation::Ninety),
+            0b1011 => (PipeTile::T, Rotation::OneEighty),
+            0b1101 => (PipeTile::T, Rotation::TwoSeventy),
 
-            0b1111 => (5, 0),
+            0b1111 => (PipeTile::All, Rotation::Zero),
 
             _ => unreachable!(),
         };
-        (i + j, rot)
+        (tile, drain, rot)
+    }
+
+    pub fn set_dirs(&mut self, dir: Directions<bool>) {
+        self.data &= 0b1111_0000;
+        if dir.up {
+            self.data |= 0b1000;
+        }
+        if dir.right {
+            self.data |= 0b0100;
+        }
+        if dir.down {
+            self.data |= 0b0010;
+        }
+        if dir.left {
+            self.data |= 0b0001;
+        }
     }
 
     /// (drain, connections)
@@ -94,11 +137,12 @@ impl Pipe {
     }
 }
 
+#[derive(Default, Clone, Copy, Debug)]
 pub struct Directions<T> {
-    up: T,
-    down: T,
-    left: T,
-    right: T,
+    pub up: T,
+    pub down: T,
+    pub left: T,
+    pub right: T,
 }
 
 impl<T> Directions<T> {

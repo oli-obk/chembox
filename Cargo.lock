@@ -2966,9 +2966,9 @@ dependencies = [
 
 [[package]]
 name = "spanned"
-version = "0.1.4"
+version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f711b99fe4537c9b5f9641d7d2fdd1a3310ea1b607fa22361be2481caf8a8733"
+checksum = "a07fddc598e86e56c425cd8b94e8bb6a0dda64d49d3dea784f89b347a3e1d782"
 dependencies = [
  "bstr",
  "color-eyre",

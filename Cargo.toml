@@ -9,7 +9,7 @@ edition = "2021"
 bevy = { version = "0.11.3", features = ["dynamic_linking"] }
 bevy_ecs_tilemap = "0.11.1"
 bevy_pancam = "0.9.0"
-spanned = "0.1.4"
+spanned = "0.1.5"
 
 # Enable a small amount of optimization in debug mode
 [profile.dev]

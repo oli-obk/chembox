@@ -2,6 +2,7 @@ use bevy::prelude::*;
 use bevy_ecs_tilemap::prelude::*;
 use bevy_pancam::{PanCam, PanCamPlugin};
 use grid::Grid;
+use pipe::Rotation;
 use spanned::Spanned;
 
 mod grid;
@@ -22,7 +23,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Quer
         .collect::<Vec<_>>();
 
     let grid = Spanned::read_from_file("data/test.grid").unwrap();
-    let grid = Grid::parse(grid.lines()).unwrap();
+    let grid = Grid::parse(grid.lines());
 
     let map_size = TilemapSize {
         x: grid.width(),
@@ -49,23 +50,22 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Quer
             let tile_pos = TilePos { x, y };
             let (index, rotation) = grid[(x, map_size.y - y - 1)].index_and_rotation();
             let flip = match rotation {
-                0 => TileFlip::default(),
-                1 => TileFlip {
+                Rotation::Zero => TileFlip::default(),
+                Rotation::Ninety => TileFlip {
                     x: true,
                     y: false,
                     d: true,
                 },
-                2 => TileFlip {
+                Rotation::OneEighty => TileFlip {
                     x: true,
                     y: true,
                     d: false,
                 },
-                3 => TileFlip {
+                Rotation::TwoSeventy => TileFlip {
                     x: false,
                     y: true,
                     d: true,
                 },
-                _ => unreachable!(),
             };
             let tile_entity = commands
                 .spawn(TileBundle {
