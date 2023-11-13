@@ -1,24 +1,18 @@
 use spanned::Spanned;
 
 pub const PIPES: &[&str] = &[
-    "end_pipe0.png",
-    "end_pipe1.png",
-    "end_pipe2.png",
-    "end_pipe2opposite.png",
-    "end_pipe3.png",
-    "end_pipe4.png",
-    "drain_pipe0.png",
-    "drain_pipe1.png",
-    "drain_pipe2.png",
-    "drain_pipe2opposite.png",
-    "drain_pipe3.png",
-    "drain_pipe4.png",
     "pipe0.png",
     "pipe1.png",
     "pipe2.png",
     "pipe2opposite.png",
     "pipe3.png",
     "pipe4.png",
+    "drain_pipe0.png",
+    "drain_pipe1.png",
+    "drain_pipe2.png",
+    "drain_pipe2opposite.png",
+    "drain_pipe3.png",
+    "drain_pipe4.png",
     "pump.png",
 ];
 
@@ -26,12 +20,6 @@ pub const PIPES: &[&str] = &[
 pub struct Pipe {
     // Bitmask of the actual data
     data: u8,
-}
-
-pub enum Center {
-    Nothing,
-    Drain,
-    Connected,
 }
 
 impl Pipe {
@@ -66,20 +54,16 @@ impl Pipe {
         (i + j, rot)
     }
 
-    pub fn parts(&self) -> (Center, Directions<bool>) {
-        let center = match (self.data & 0b1100_0000) >> 6 {
-            0 => Center::Nothing,
-            1 => Center::Drain,
-            2 => Center::Connected,
-            _ => unreachable!(),
-        };
+    /// (drain, connections)
+    pub fn parts(&self) -> (bool, Directions<bool>) {
+        let drain = (self.data & 0b1000_0000) != 0;
         let directions = Directions {
             up: self.data & 0b0000_1000 != 0,
             right: self.data & 0b0000_0100 != 0,
             down: self.data & 0b0000_0010 != 0,
             left: self.data & 0b0000_0001 != 0,
         };
-        (center, directions)
+        (drain, directions)
     }
 
     pub fn parse(c: &Spanned<char>) -> Option<Self> {

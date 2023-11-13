@@ -12,7 +12,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Quer
         grab_buttons: vec![MouseButton::Middle], // which buttons should drag the camera
         enabled: true,        // when false, controls are disabled. See toggle example.
         zoom_to_cursor: true, // whether to zoom towards the mouse or the center of the screen
-        min_scale: 1.,        // prevent the camera from zooming too far in
+        min_scale: 0.1,       // prevent the camera from zooming too far in
         ..Default::default()
     });
 
@@ -83,6 +83,10 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Quer
     let tile_size = TilemapTileSize { x: 500.0, y: 500.0 };
     let map_type = TilemapType::Square;
 
+    let scalex = (windows.single().width() - 100.0) / tile_size.x * (map_size.x as f32);
+    let scaley = (windows.single().height() - 100.0) / tile_size.y * (map_size.y as f32);
+    let scale = scalex.min(scaley);
+
     commands.entity(tilemap_entity).insert(TilemapBundle {
         grid_size: tile_size.into(),
         map_type,
@@ -90,7 +94,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Quer
         storage: tile_storage,
         texture: TilemapTexture::Vector(texture_handle),
         tile_size,
-        transform: Transform::from_scale((1.0 / 16.0, 1.0 / 16.0, 1.0).into()).with_translation(
+        transform: Transform::from_scale((1.0 / scale, 1.0 / scale, 1.0).into()).with_translation(
             (
                 -windows.single().width() / 2.0 + 50.0,
                 -windows.single().height() / 2.0 + 50.0,
