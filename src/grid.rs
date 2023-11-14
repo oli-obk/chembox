@@ -121,7 +121,7 @@ impl Element {
                 let (tile, drain, rot) = p.tile_and_rotation();
                 (tile.index(drain), rot)
             }
-            Element::Pump => (12, Rotation::Zero),
+            Element::Pump => (18, Rotation::Zero),
         }
     }
 

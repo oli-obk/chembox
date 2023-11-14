@@ -13,6 +13,12 @@ pub const PIPES: &[&str] = &[
     "drain_pipe2opposite.png",
     "drain_pipe3.png",
     "drain_pipe4.png",
+    "end_pipe0.png",
+    "end_pipe1.png",
+    "end_pipe2.png",
+    "end_pipe2opposite.png",
+    "end_pipe3.png",
+    "end_pipe4.png",
     "pump.png",
     "pump_spinner.png",
 ];
@@ -45,15 +51,26 @@ pub enum PipeTile {
 }
 
 impl PipeTile {
-    pub fn index(self, drain: bool) -> u8 {
-        self as u8 + 6 * drain as u8
+    pub fn index(self, center: Center) -> u8 {
+        self as u8 + 6 * center as u8
     }
+}
+
+pub enum Center {
+    Connected = 0,
+    Drain = 1,
+    End = 2,
 }
 
 impl Pipe {
     pub const EMPTY: Self = Self { data: 0 };
-    pub fn tile_and_rotation(&self) -> (PipeTile, bool, Rotation) {
-        let drain = ((self.data & 0b1100_0000) >> 6) != 0;
+    pub fn tile_and_rotation(&self) -> (PipeTile, Center, Rotation) {
+        let center = match (self.data & 0b1100_0000) >> 6 {
+            0 => Center::Connected,
+            1 => Center::Drain,
+            2 => Center::End,
+            _ => unreachable!(),
+        };
         let (tile, rot) = match self.data & 0b0000_1111 {
             0b0000 => (PipeTile::Empty, Rotation::Zero),
 
@@ -79,7 +96,7 @@ impl Pipe {
 
             _ => unreachable!(),
         };
-        (tile, drain, rot)
+        (tile, center, rot)
     }
 
     pub fn set_dirs(&mut self, dir: Directions<bool>) {
@@ -113,7 +130,8 @@ impl Pipe {
     pub fn parse(c: &Spanned<char>) -> Option<Self> {
         Some(Self {
             data: match **c {
-                ' ' => 0,
+                '•' => 0b0,
+                ' ' => 0b1000_0000,
 
                 '░' => 0b0100_0000,
 
