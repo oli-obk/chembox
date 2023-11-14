@@ -14,6 +14,7 @@ pub const PIPES: &[&str] = &[
     "drain_pipe3.png",
     "drain_pipe4.png",
     "pump.png",
+    "pump_spinner.png",
 ];
 
 #[derive(Default, Debug)]

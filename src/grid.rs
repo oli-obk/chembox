@@ -68,10 +68,10 @@ impl Grid {
                         }
                     }
                 }
-                let Element::Pipe(p) = &mut grid[(x, y)] else {
-                    unreachable!()
-                };
-                p.set_dirs(dirs);
+                match &mut grid[(x, y)] {
+                    Element::Pipe(p) => p.set_dirs(dirs),
+                    Element::Pump => {}
+                }
             }
         }
         grid
@@ -109,24 +109,31 @@ impl Element {
         if let Some(pipe) = Pipe::parse(&c) {
             return Self::Pipe(pipe);
         }
-        match c {
+        match *c {
+            '⤴' => Self::Pump,
             _ => panic!("{}: unknown char", c.span),
         }
     }
+
     pub fn index_and_rotation(&self) -> (u8, Rotation) {
         match self {
             Element::Pipe(p) => {
                 let (tile, drain, rot) = p.tile_and_rotation();
                 (tile.index(drain), rot)
             }
-            Element::Pump => (18, Rotation::Zero),
+            Element::Pump => (12, Rotation::Zero),
         }
     }
 
     fn connections(&self) -> Directions<bool> {
         match self {
             Element::Pipe(p) => p.parts().1,
-            Element::Pump => todo!(),
+            Element::Pump => Directions {
+                up: true,
+                down: false,
+                left: true,
+                right: false,
+            },
         }
     }
 }
