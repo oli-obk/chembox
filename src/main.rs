@@ -32,7 +32,7 @@ fn startup(mut commands: Commands, asset_server: Res<AssetServer>, windows: Quer
 
     let spinner_texture = asset_server.load("pump_spinner.png");
 
-    let grid = Spanned::read_from_file("data/test.grid").unwrap();
+    let grid = Spanned::read_from_file("data/autosave.grid").unwrap();
     let grid = Grid::parse(grid.lines());
 
     let map_size = TilemapSize {

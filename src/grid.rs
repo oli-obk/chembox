@@ -110,7 +110,7 @@ impl Element {
             return Self::Pipe(pipe);
         }
         match *c {
-            '⤴' => Self::Pump,
+            '╯' => Self::Pump,
             _ => panic!("{}: unknown char", c.span),
         }
     }
