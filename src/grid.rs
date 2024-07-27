@@ -36,10 +36,10 @@ impl Grid {
         self.data.get(y as usize)?.get(x as usize)
     }
 
-    pub fn parse<'a>(lines: impl Iterator<Item = Spanned<&'a str>>) -> Self {
+    pub fn parse<'a>(lines: impl Iterator<Item = Spanned<&'a [u8]>>) -> Self {
         let mut grid = Grid {
             data: lines
-                .map(|line| line.chars().map(Element::parse).collect())
+                .map(|line| line.to_str().unwrap().chars().map(Element::parse).collect())
                 .collect(),
         };
         // Set connections that were not encoded in the symbols.
